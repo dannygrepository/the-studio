@@ -20,8 +20,8 @@ interface Issue {
 
 const ISSUES: Record<string, Issue> = {
   div: { id: 'div', title: 'A clickable <div>', from: 'gus', tool: false, why: "Keyboards can't reach it and screen readers don't announce it as clickable. Anything clickable is a <button>. Or, since the whole row is already a button, it shouldn't be clickable at all." },
-  hex: { id: 'hex', title: 'Hex color', from: 'dot', tool: true, why: "#ef4444 isn't ours. 💜 The badge should use the sidebar badge token, like every other unread count." },
-  px: { id: 'px', title: 'Arbitrary pixel value', from: 'dot', tool: true, why: 'px-[6px] skips the spacing scale. 💜 px-1.5 or px-2 are right there.' },
+  hex: { id: 'hex', title: 'Hex color', from: 'dot', tool: true, why: "#ef4444 isn't ours. 💜 The badge should use the sidebar badge token, like every other unread count." }, // dot-ignore
+  px: { id: 'px', title: 'Arbitrary pixel value', from: 'dot', tool: true, why: 'px-[6px] skips the spacing scale. 💜 px-1.5 or px-2 are right there.' }, // dot-ignore
   white: { id: 'white', title: 'Palette color (text-white)', from: 'dot', tool: false, why: "My audit misses this one. 💜 text-white won't flip in a dark theme. Use the foreground token that pairs with the background." },
   style: { id: 'style', title: 'Inline style', from: 'dot', tool: true, why: 'fontSize: 11 and lineHeight: 18px are type tokens in disguise. 💜 text-xs exists.' },
   label: { id: 'label', title: 'No screen-reader label', from: 'gus', tool: false, why: 'A screen reader announces "3". Three what? Add aria-label={`${count} unread messages`}.' },
@@ -36,9 +36,9 @@ const CODE: { text: string; issue?: string }[] = [
   { text: '      onClick={onClick}', issue: 'div' },
   { text: '      className="ml-auto rounded-full' },
   { text: '        bg-[#ef4444]', issue: 'hex' }, // dot-ignore
-  { text: '        px-[6px]', issue: 'px' },
+  { text: '        px-[6px]', issue: 'px' }, // dot-ignore
   { text: '        text-white"', issue: 'white' },
-  { text: "      style={{ fontSize: 11, lineHeight: '18px' }}", issue: 'style' },
+  { text: "      style={{ fontSize: 11, lineHeight: '18px' }}", issue: 'style' }, // dot-ignore
   { text: '    >' },
   { text: '      {count}', issue: 'label' },
   { text: '    </div>' },

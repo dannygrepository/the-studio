@@ -31,8 +31,8 @@ function run(state: S, input: string): { state: S; lines: Line[] } {
       lines: [
         L('err', '💜 Dotty: I found 3 hard-coded values. We talked about this.'),
         L('err', `  ${FILE}:6  hex color: #ef4444`), // dot-ignore
-        L('err', `  ${FILE}:6  arbitrary value: px-[6px]`),
-        L('err', `  ${FILE}:7  inline style: style={{`),
+        L('err', `  ${FILE}:6  arbitrary value: px-[6px]`), // dot-ignore
+        L('err', `  ${FILE}:7  inline style: style={{`), // dot-ignore
         L('muted', "(The audit can't see: the clickable div, the missing label, text-white, or the 0 badge. That's you.)"),
       ],
     }
@@ -70,7 +70,7 @@ function run(state: S, input: string): { state: S; lines: Line[] } {
           L('ok', `+++ b/${FILE}`),
           L('ok', '+    <div onClick={onClick}'),
           L('ok', '+      className="ml-auto rounded-full bg-[#ef4444] px-[6px] text-white"'), // dot-ignore
-          L('ok', "+      style={{ fontSize: 11, lineHeight: '18px' }}>"),
+          L('ok', "+      style={{ fontSize: 11, lineHeight: '18px' }}>"), // dot-ignore
           L('ok', '+      {count}'),
           L('muted', '+++ b/src/components/chat/Sidebar.tsx'),
           L('err', '-                  {n > 0 && <Badge variant="sidebar">{n}</Badge>}'),
