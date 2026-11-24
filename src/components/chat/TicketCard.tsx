@@ -92,7 +92,14 @@ export function TicketCard({ ticketId }: { ticketId: string }) {
             Type the git commands yourself in your terminal. When you've pushed, switch back to
             Claude Code (your coach) and type <strong>done</strong>. Stuck? Type <strong>hint</strong>.
           </p>
-        ) : null}
+        ) : status === 'changes' ? (
+          <p className="text-sm text-muted-foreground">
+            {from.name.split(' ')[0]} asked for changes (see their DM). Fix them on the same branch, push, then type{' '}
+            <strong>done</strong> in Claude Code again.
+          </p>
+        ) : (
+          <p className="text-sm text-success">Done. Nice work.</p>
+        )}
       </CardFooter>
     </Card>
   )

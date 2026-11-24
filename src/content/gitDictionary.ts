@@ -55,6 +55,16 @@ export const COMMANDS: Record<string, Term> = {
   log: T('log', 'command', 'Shows the list of commits, newest first.', 'Scrolling the version history panel.', 'git log --oneline'),
   diff: T('diff', 'command', 'Shows exactly which lines changed.', 'Like a before/after comparison of a frame.', 'git diff'),
   blame: T('blame', 'command', 'Shows who last changed each line, and in which commit.', 'Less about blame, more about "who do I ask?"'),
+  show: T('show', 'command', 'Shows one commit in full: who, when, the message, and exactly what changed.', 'Clicking one version in version history.', 'git show 9f2b6a1'),
+  merge: T('merge', 'command', "Brings another branch's commits into the branch you're on.", 'Like accepting changes from a duplicate page back into this one.', 'git merge main'),
+  stash: T('stash', 'command', 'Parks your unsaved changes in a drawer so you get a clean slate. `git stash pop` brings them back.', 'Like hiding a layer group while you work on something else.', 'git stash'),
+  'cherry-pick': T('cherry-pick', 'command', 'Copies one commit from anywhere onto the branch you are on.', 'Copying a single finished layer out of a messy exploration file.', 'git cherry-pick 5be93d7'),
+  rebase: T('rebase', 'command', 'Replays your commits on top of a newer base, as if you started there. Rewrites your commits, so only on branches nobody else uses.', 'Rebuilding your frames on the updated library instead of the old one.', 'git rebase main'),
+  revert: T('revert', 'command', 'Makes a new commit that undoes an old one. Nothing is erased; history gets an "undo" entry.', 'The safe undo for anything already shared.', 'git revert f1d4c07'),
+  reset: T('reset', 'command', 'Moves your branch back to an earlier commit. With --hard it also throws away changes. Only for work nobody else has.', 'Deleting versions from history. Dangerous on shared branches.', 'git reset --soft HEAD~1'),
+  restore: T('restore', 'command', 'Throws away unsaved changes to a file, back to the last commit.', '"Revert to saved" for one file.', 'git restore src/styles/tokens.css'),
+  fetch: T('fetch', 'command', "Downloads new commits and branches from GitHub without changing your files.", 'Checking for updates without applying them.', 'git fetch'),
+  npm: T('npm', 'tool', "Runs the project's scripts. In The Studio: `npm run dev` (the app), `npm run dot` (Dotty's audit), `npm run check` (types + audit)."),
 }
 
 /**
@@ -72,6 +82,20 @@ export const OPTIONS: Record<string, Term> = {
   '-u': T('-u', 'option', '"Upstream." Links your branch to its copy on GitHub.'),
   '-c': T('-c', 'option', '"Create." Usually: make something new with this name.'),
   '-b': T('-b', 'option', '"Branch." Make a new branch.'),
+  'branch -d': T('-d', 'option', '"Delete." Removes a branch that is already merged. Git refuses if it isn\'t, so you can\'t lose work by accident.', undefined, 'git branch -d fix/button-color'),
+  'merge --abort': T('--abort', 'option', 'Gives up on a merge in progress and puts everything back how it was. The escape hatch.'),
+  'commit --no-edit': T('--no-edit', 'option', 'Use the message git already wrote (for merges and reverts) instead of opening an editor.'),
+  'revert --no-edit': T('--no-edit', 'option', 'Keep git\'s pre-written "Revert …" message without opening an editor.'),
+  'reset --hard': T('--hard', 'option', 'Also throws away all uncommitted changes. There is no undo. Only on your own unshared work.'),
+  'reset --soft': T('--soft', 'option', 'Moves back but keeps your changes staged, so you can recommit them.'),
+  'push --force': T('--force', 'option', 'Overwrites the branch on GitHub with yours, even if it erases other people\'s commits. Never on main.'),
+  'cherry-pick -x': T('-x', 'option', 'Adds "(cherry picked from commit …)" to the message, so history shows where it came from.'),
+  'diff --name-only': T('--name-only', 'option', 'List only the names of changed files, not the changes.'),
+  'add -p': T('-p', 'option', '"Patch." Walks you through each change in a file so you can stage only some of them.'),
+  'stash pop': T('pop', 'name', 'Takes the newest stash out of the drawer and puts the changes back in your files.'),
+  'stash list': T('list', 'name', 'Shows everything in the stash drawer.'),
+  '--': T('--', 'option', 'Means "what follows are file names." `git log -- <file>` shows only commits that touched that file.'),
+  '-f': T('-f', 'option', '"Force." Usually means "do it even though git is warning you." Be careful.'),
 }
 
 /** Names that have a fixed meaning. */
@@ -79,6 +103,7 @@ export const NAMES: Record<string, Term> = {
   origin: T('origin', 'name', 'The nickname for the GitHub copy of the project you cloned from.', 'Your laptop is local; origin is the shared copy in the cloud.'),
   main: T('main', 'name', 'The main branch: the trusted version everyone builds on.', 'The published library. Nobody edits it directly.'),
   HEAD: T('HEAD', 'name', 'Where you are right now: the latest commit on your current branch.'),
+  'HEAD~1': T('HEAD~1', 'name', 'One commit before where you are now. HEAD~2 is two before, and so on.'),
 }
 
 /** Words you fill in yourself. Matched by shape, not spelling. */
@@ -100,7 +125,10 @@ function words(command: string) {
   return command.match(/"[^"]*"|'[^']*'|\S+/g) ?? []
 }
 
-const BRANCH_COMMANDS = new Set(['switch', 'checkout', 'branch', 'push', 'pull'])
+const BRANCH_COMMANDS = new Set(['switch', 'checkout', 'branch', 'push', 'pull', 'merge', 'rebase'])
+const HASH_COMMANDS = new Set(['show', 'revert', 'cherry-pick', 'reset'])
+
+const HASH = T('commit hash', 'placeholder', 'The ID of a commit. The first 7 characters are enough. Copy it from `git log --oneline`.', undefined, '9f2b6a1')
 
 /** Break a command into its words, each with its dictionary meaning (if any). */
 export function explain(command: string): Part[] {
@@ -111,6 +139,8 @@ export function explain(command: string): Part[] {
     if (i === 0) return { text: w, term: COMMANDS[w] }
     if (tool === 'git' && i === 1) return { text: w, term: COMMANDS[w] }
     if (w.startsWith('-')) return { text: w, term: OPTIONS[`${sub} ${w}`] ?? OPTIONS[w] }
+    if (OPTIONS[`${sub} ${w}`]) return { text: w, term: OPTIONS[`${sub} ${w}`] }
+    if (sub && HASH_COMMANDS.has(sub) && /^[0-9a-f]{7,40}$|^<.*hash.*>$/.test(w)) return { text: w, term: HASH }
     if (/^["']/.test(w)) return { text: w, term: PLACEHOLDERS.message }
     if (w === '"..."') return { text: w, term: PLACEHOLDERS.message }
     if (NAMES[w]) return { text: w, term: NAMES[w] }
@@ -124,7 +154,7 @@ export function explain(command: string): Part[] {
 
 /** Does this look like a command worth explaining? */
 export function isCommand(text: string) {
-  return /^(git|cd|ls|pwd)(\s|$)/.test(text.trim())
+  return /^(git|cd|ls|pwd|npm run)(\s|$)/.test(text.trim())
 }
 
 /** Everything, for the dictionary page. */
@@ -135,4 +165,5 @@ export const ALL_TERMS: Term[] = [
     .map(([key, t]) => ({ ...t, term: key })),
   ...Object.values(NAMES),
   ...Object.values(PLACEHOLDERS),
+  HASH,
 ]
