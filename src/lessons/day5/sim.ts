@@ -17,9 +17,10 @@ interface S {
   sawLog: boolean
   picked: string | null
   pushed: boolean
+  madeHotfix: boolean
 }
 
-const INITIAL: S = { branch: 'main', dirty: true, stashed: false, popped: false, sawLog: false, picked: null, pushed: false }
+const INITIAL: S = { branch: 'main', dirty: true, stashed: false, popped: false, sawLog: false, picked: null, pushed: false, madeHotfix: false }
 
 function run(state: S, input: string): { state: S; lines: Line[] } {
   const s = { ...state }
@@ -61,6 +62,7 @@ function run(state: S, input: string): { state: S; lines: Line[] } {
       if (!name) return { state: s, lines: [L('err', 'fatal: missing branch name')] }
       if (s.dirty && !s.popped) return { state: s, lines: [L('gus', "Gus: You have a half-done edit. It'll come along for the ride. Park it first: git stash.")] }
       s.branch = name
+      if (name.startsWith('hotfix/')) s.madeHotfix = true
       return { state: s, lines: [L('ok', `Switched to ${create ? 'a new ' : ''}branch '${name}'`)] }
     }
     case 'cherry-pick': {
@@ -93,7 +95,7 @@ export const day5Sim: Sim<S> = {
   goals: [
     { id: 'stash', label: 'Park your half-done edit', hint: 'git stash', done: (s) => s.stashed },
     { id: 'log', label: "Find Bjorn's fix", hint: `git log --oneline ${BJORN}`, done: (s) => s.sawLog },
-    { id: 'branch', label: 'Make a hotfix/… branch', hint: 'git switch -c hotfix/people-footer-typo', done: (s) => s.branch.startsWith('hotfix/') },
+    { id: 'branch', label: 'Make a hotfix/… branch', hint: 'git switch -c hotfix/people-footer-typo', done: (s) => s.madeHotfix },
     { id: 'pick', label: 'Cherry-pick only the fix', hint: `git cherry-pick ${FIX}`, done: (s) => s.picked === FIX },
     { id: 'push', label: 'Push it', hint: 'git push -u origin hotfix/people-footer-typo', done: (s) => s.pushed },
     { id: 'pop', label: 'Back on main, get your edit back', hint: 'git stash pop', done: (s) => s.popped },

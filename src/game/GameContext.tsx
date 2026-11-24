@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 import reviewsJson from '../../game/reviews.json'
 import storyJson from '../../game/story.json'
 import { DEFAULT_CHOICES, DEFAULT_PROGRESS } from './defaults'
-import { allVisibleBeats, applyReward, buildStory, dayOf } from './engine'
+import { applyReward, buildStory, dayOf, unlockedBeats } from './engine'
 import { load, reset, save } from './persistence'
 import type { Choice, Choices, Progress, Reviews, Reward, Story } from './types'
 
@@ -50,11 +50,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
     if (loaded.current) save('choices', choices)
   }, [choices])
 
-  // Apply one-time rewards on beats as they become visible (e.g. Gus's
-  // review after you finish a ticket).
+  // Apply one-time rewards on beats as they unlock (e.g. Gus's review after
+  // you finish a ticket), even if the chat hasn't scrolled to them yet.
   useEffect(() => {
     if (!ready) return
-    const pending = allVisibleBeats(story, progress, choices.choices).filter(
+    const pending = unlockedBeats(story, progress, choices.choices).filter(
       (b) => b.reward && !progress.applied.includes(b.id),
     )
     if (!pending.length) return

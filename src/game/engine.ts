@@ -104,6 +104,15 @@ export function visibleBeats(
   return out
 }
 
+/**
+ * Beats that are unlocked, ignoring the "conversation pauses at an unanswered
+ * choice" rule. Rewards come from these, so an optional reply you haven't
+ * picked can never hold back XP or the next day.
+ */
+export function unlockedBeats(story: Story, progress: Progress, choices: ChoiceRecord[]) {
+  return story.beats.filter((b) => phaseUnlocked(b, story, progress) && meets(b.requires, progress, choices, story.reviews))
+}
+
 export function allVisibleBeats(story: Story, progress: Progress, choices: ChoiceRecord[]) {
   return story.channels.flatMap((c) => visibleBeats(story, progress, choices, c.id))
 }

@@ -12,9 +12,10 @@ interface S {
   pushed: boolean
   merged: boolean
   caughtUp: boolean
+  started: boolean
 }
 
-const INITIAL: S = { branch: 'main', pulled: false, edited: [], staged: [], commits: [], pushed: false, merged: false, caughtUp: false }
+const INITIAL: S = { branch: 'main', pulled: false, edited: [], staged: [], commits: [], pushed: false, merged: false, caughtUp: false, started: false }
 
 const pending = (s: S) => s.edited.filter((f) => !s.commits.some((c) => c.files.includes(f)))
 
@@ -46,6 +47,7 @@ function run(state: S, input: string): { state: S; lines: Line[] } {
       if (!name) return { state: s, lines: [L('err', 'fatal: missing branch name')] }
       if (create && !s.pulled) return { state: s, lines: [L('gus', 'Gus: Pull first. Branch from the latest main, not yesterday\'s.')] }
       s.branch = name
+      if (create && name.startsWith('feature/')) s.started = true
       return { state: s, lines: [L('ok', `Switched to ${create ? 'a new ' : ''}branch '${name}'`)] }
     }
     case 'pull':
@@ -101,7 +103,7 @@ export const day9Sim: Sim<S> = {
   prompt: (s) => `~/the-studio (${s.branch}) $`,
   run,
   goals: [
-    { id: 'start', label: 'Start from the latest main on a feature branch', hint: 'git pull', done: (s) => s.pulled && s.branch.startsWith('feature/') },
+    { id: 'start', label: 'Start from the latest main on a feature branch', hint: 'git pull', done: (s) => s.started },
     { id: 'three', label: 'Three focused commits (one file each)', hint: `edit ${FILES[0]}`, done: (s) => s.commits.length >= 3 && s.commits.every((c) => c.files.length === 1) },
     { id: 'push', label: 'Push the branch', hint: 'git push -u origin feature/kudos-page', done: (s) => s.pushed },
     { id: 'merge', label: 'Merge the pull request', hint: 'merge', done: (s) => s.merged },
