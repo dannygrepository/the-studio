@@ -7,6 +7,7 @@ import { Day4Lesson } from './day4/Day4Lesson'
 import { Day5Lesson } from './day5/Day5Lesson'
 import { Day6Lesson } from './day6/Day6Lesson'
 import { Day7Lesson } from './day7/Day7Lesson'
+import { Day8Lesson } from './day8/Day8Lesson'
 
 /** Register each day's lesson here. */
 const LESSONS: Record<string, ComponentType> = {
@@ -17,6 +18,7 @@ const LESSONS: Record<string, ComponentType> = {
   day5: Day5Lesson,
   day6: Day6Lesson,
   day7: Day7Lesson,
+  day8: Day8Lesson,
 }
 
 export function LessonView({ lessonId }: { lessonId: string }) {
