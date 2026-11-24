@@ -175,7 +175,7 @@
         "Look before you leap: `git status` and `git diff`",
         "Stage and commit: `git add src/content/team.ts` then `git commit -m \"...\"` with a message that would survive Commit Court",
         "Publish your branch: `git push -u origin onboarding/add-<your-name>`",
-        "Tell your coach **done** in the project thread. Stuck? Say **hint**."
+        "Switch back to Claude Code, where your coach lives, and type **done**. Stuck? Type **hint**."
       ],
       "acceptance": [
         "Your `onboarding/...` branch exists on GitHub",

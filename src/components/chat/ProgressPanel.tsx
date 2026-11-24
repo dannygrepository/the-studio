@@ -1,4 +1,4 @@
-import { Award, RotateCcw, Star, Users } from 'lucide-react'
+import { Award, RotateCcw, Star, SquareTerminal, Users } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -64,6 +64,21 @@ export function ProgressPanel() {
               </span>
             )}
           </div>
+        </CardContent>
+      </Card>
+
+      <Card className="gap-2 border-primary/30 bg-accent py-4">
+        <CardHeader className="px-4">
+          <CardTitle className="flex items-center gap-2 text-sm text-accent-foreground">
+            <SquareTerminal className="size-4 text-primary" /> Your coach
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-1 px-4 text-sm text-accent-foreground">
+          <p>Claude, in Claude Code (where you started the game).</p>
+          <p>
+            Pushed your ticket? Type <code className="font-mono font-semibold">done</code> there.
+            Stuck? Type <code className="font-mono font-semibold">hint</code>.
+          </p>
         </CardContent>
       </Card>
 

@@ -56,6 +56,14 @@ export const daySteps = [
   },
   {
     title: 'Tell your coach "done"',
-    body: 'Your coach (Claude) checks your work and posts the team\'s reactions. Run git pull to read them.',
+    body: 'Back in Claude Code, type "done". Your coach checks your work and posts the team\'s reactions here.',
   },
+]
+
+/** What you can say to your coach in Claude Code. */
+export const coachPhrases = [
+  { say: 'done', does: 'You pushed your ticket. The coach checks it and the team reacts.' },
+  { say: 'hint', does: 'The next step, not the whole answer.' },
+  { say: 'help me', does: 'A bigger nudge, when a hint isn\'t enough.' },
+  { say: 'what does git … mean?', does: 'Ask anything. There are no dumb questions. (Bjorn has tested this.)' },
 ]

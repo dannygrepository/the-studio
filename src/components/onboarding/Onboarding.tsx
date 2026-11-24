@@ -3,11 +3,11 @@ import { useEffect, useRef, useState } from 'react'
 
 import { CastAvatar } from '@/components/chat/CastAvatar'
 import { Button } from '@/components/ui/button'
-import { daySteps, intros } from '@/content/onboarding'
+import { coachPhrases, daySteps, intros } from '@/content/onboarding'
 import { useGame } from '@/game/GameContext'
 import { cn } from '@/lib/utils'
 
-const STEPS = ['Welcome', 'The team', 'Your day', 'Start'] as const
+const STEPS = ['Welcome', 'The team', 'Your day', 'Your coach', 'Start'] as const
 
 function Welcome() {
   return (
@@ -79,9 +79,43 @@ function Day() {
         ))}
       </ol>
       <p className="rounded-lg bg-accent p-3 text-sm text-accent-foreground">
-        Stuck? Say <strong>“hint”</strong> to your coach for the next step. A day takes about 20
+        Stuck? Say <strong>“hint”</strong> to your coach in Claude Code. A day takes about 20
         minutes. Your XP, reputation, and badges live in the panel on the right.
       </p>
+    </div>
+  )
+}
+
+function Coach() {
+  return (
+    <div className="flex flex-col gap-4">
+      <p className="text-base">
+        Your coach is <strong>Claude</strong>, in <strong>Claude Code</strong>: the window where you
+        started this game. The coach isn't in this chat app. Whenever you need them, switch back to
+        Claude Code and type.
+      </p>
+      <div className="rounded-lg bg-terminal p-4 font-mono text-sm">
+        <div className="text-terminal-muted">Claude Code</div>
+        <div className="mt-2 text-terminal-foreground">
+          <span className="text-terminal-prompt">&gt;</span> done
+        </div>
+        <div className="mt-1 text-terminal-muted">
+          Checking onboarding/add-sam… branch is on GitHub, commit message passes Commit Court.
+          Posting Gus's review now.
+        </div>
+      </div>
+      <dl className="flex flex-col gap-2 text-sm">
+        {coachPhrases.map((p) => (
+          <div key={p.say} className="flex gap-3">
+            <dt className="w-40 shrink-0">
+              <code className="rounded-sm bg-muted px-1 py-0.5 font-mono text-accent-foreground">
+                {p.say}
+              </code>
+            </dt>
+            <dd className="text-muted-foreground">{p.does}</dd>
+          </div>
+        ))}
+      </dl>
     </div>
   )
 }
@@ -107,11 +141,12 @@ function Start() {
   )
 }
 
-const BODIES = [Welcome, Team, Day, Start]
+const BODIES = [Welcome, Team, Day, Coach, Start]
 const TITLES = [
   'Welcome to The Studio',
   'Meet the team',
   'How a day works',
+  'Meet your coach',
   'Ready for Day 1?',
 ]
 

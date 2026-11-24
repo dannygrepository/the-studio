@@ -89,8 +89,8 @@ export function TicketCard({ ticketId }: { ticketId: string }) {
           </Button>
         ) : status === 'open' ? (
           <p className="text-sm text-muted-foreground">
-            Type the git commands yourself in your terminal. When you've pushed, tell your coach
-            <strong> "done"</strong>. Stuck? Say <strong>"hint"</strong>.
+            Type the git commands yourself in your terminal. When you've pushed, switch back to
+            Claude Code (your coach) and type <strong>done</strong>. Stuck? Type <strong>hint</strong>.
           </p>
         ) : null}
       </CardFooter>
