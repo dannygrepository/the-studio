@@ -36,7 +36,9 @@ export const INITIAL: SimState = {
   goodCommit: false,
 }
 
-export type Line = { kind: 'out' | 'err' | 'ok' | 'gus' | 'muted'; text: string }
+import { createElement } from 'react'
+import type { Goal, Line, Sim } from '../sim'
+export type { Line }
 
 function hash() {
   return Math.random().toString(16).slice(2, 9)
@@ -273,14 +275,7 @@ export function run(state: SimState, input: string): { state: SimState; lines: L
   }
 }
 
-export interface Goal {
-  id: string
-  label: string
-  hint: string
-  done: (s: SimState) => boolean
-}
-
-export const GOALS: Goal[] = [
+export const GOALS: Goal<SimState>[] = [
   { id: 'clone', label: 'Clone the repo', hint: `git clone ${REMOTE_URL}`, done: (s) => s.cloned },
   { id: 'cd', label: 'Move into the project folder', hint: 'cd the-studio', done: (s) => s.cwd === '~/the-studio' },
   { id: 'branch', label: 'Create and switch to a branch (not main)', hint: 'git switch -c onboarding/add-me', done: (s) => s.branch !== 'main' },
@@ -289,3 +284,22 @@ export const GOALS: Goal[] = [
   { id: 'commit', label: 'Commit with a Gus-approved message', hint: 'git commit -m "Add myself to the team directory"', done: (s) => s.goodCommit },
   { id: 'push', label: 'Push your branch to GitHub (and set upstream)', hint: 'git push -u origin <your-branch-name>', done: (s) => s.goodCommit && Object.entries(s.pushed).some(([b, p]) => b !== 'main' && p) },
 ]
+
+export const day1Sim: Sim<SimState> = {
+  title: 'Practice terminal',
+  description: createElement(
+    'span',
+    null,
+    'A safe, pretend git. Type real commands and nothing can break. The repo URL is ',
+    createElement('code', { className: 'font-mono' }, REMOTE_URL),
+    '. Type ',
+    createElement('code', { className: 'font-mono' }, 'help'),
+    " if you're lost.",
+  ),
+  welcome: 'Welcome to The Studio practice shell. You are in your home folder (~).',
+  initial: INITIAL,
+  prompt: (s) => `${s.cwd}${s.cwd !== '~' ? ` (${s.branch})` : ''} $`,
+  run,
+  goals: GOALS,
+}
+
