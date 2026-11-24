@@ -1,13 +1,14 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 
+import reviewsJson from '../../game/reviews.json'
 import storyJson from '../../game/story.json'
 import { DEFAULT_CHOICES, DEFAULT_PROGRESS } from './defaults'
-import { allVisibleBeats, applyReward, dayOf } from './engine'
+import { allVisibleBeats, applyReward, buildStory, dayOf } from './engine'
 import { load, reset, save } from './persistence'
-import type { Choice, Choices, Progress, Reward, Story } from './types'
+import type { Choice, Choices, Progress, Reviews, Reward, Story } from './types'
 
-const story = storyJson as unknown as Story
+const story = buildStory(storyJson as unknown as Story, reviewsJson as Reviews)
 
 interface GameValue {
   story: Story

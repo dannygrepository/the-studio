@@ -49,6 +49,8 @@ export type Phase = 'intro' | 'ticket' | 'review'
 export interface Condition {
   /** "beatId:choiceId" that must have been picked. */
   choice?: string
+  /** Your coach has recorded this review result for a ticket (see game/reviews.json). */
+  review?: { ticket: string; result: ReviewResult }
   /** Minimum reputation with coworkers. */
   minRep?: Partial<Record<CoworkerId, number>>
   maxRep?: Partial<Record<CoworkerId, number>>
@@ -70,7 +72,28 @@ export interface Beat {
   ticket?: string
   /** Renders a "start lesson" call to action for this lesson id. */
   lesson?: string
+  /**
+   * Placeholder: expands into the coach's personal notes for this review
+   * (from game/reviews.json), as messages in this beat's channel.
+   */
+  coachNotes?: { ticket: string; result: ReviewResult }
 }
+
+export type ReviewResult = 'pass' | 'redo'
+
+export interface ReviewNote {
+  from: CastId
+  text: string
+}
+
+export interface ReviewAttempt {
+  result: ReviewResult
+  at: string
+  notes?: ReviewNote[]
+}
+
+/** game/reviews.json: written by your coach with `npm run coach -- review`. */
+export type Reviews = Record<string, ReviewAttempt[]>
 
 export interface Ticket {
   id: string
@@ -98,9 +121,11 @@ export interface Story {
   days: Day[]
   tickets: Ticket[]
   beats: Beat[]
+  /** Merged in at load time from game/reviews.json. */
+  reviews: Reviews
 }
 
-export type TicketStatus = 'locked' | 'open' | 'in-review' | 'done'
+export type TicketStatus = 'locked' | 'open' | 'changes' | 'done'
 
 export interface Progress {
   day: number

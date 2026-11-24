@@ -12,7 +12,7 @@ import { RichText } from './RichText'
 const STATUS = {
   locked: { label: 'Locked', variant: 'secondary' },
   open: { label: 'Open', variant: 'default' },
-  'in-review': { label: 'In review', variant: 'warning' },
+  changes: { label: 'Changes requested', variant: 'warning' },
   done: { label: 'Done', variant: 'success' },
 } as const
 

@@ -1,11 +1,44 @@
-import type { Beat, ChoiceRecord, Condition, Progress, Reward, Story, TicketStatus } from './types'
+import type { Beat, ChoiceRecord, Condition, Progress, Reviews, Reward, Story, TicketStatus } from './types'
 
 export function pickedChoice(choices: ChoiceRecord[], beatId: string) {
   return choices.find((c) => c.beat === beatId)
 }
 
-function meets(cond: Condition | undefined, progress: Progress, choices: ChoiceRecord[]) {
+export function hasReview(reviews: Reviews, ticket: string, result: string) {
+  return (reviews[ticket] ?? []).some((a) => a.result === result)
+}
+
+/**
+ * Build the playable story: merge in reviews and expand coachNotes
+ * placeholders into real message beats.
+ */
+export function buildStory(raw: Omit<Story, 'reviews'>, reviews: Reviews): Story {
+  const beats: Beat[] = []
+  for (const beat of raw.beats) {
+    if (!beat.coachNotes) {
+      beats.push(beat)
+      continue
+    }
+    const { ticket, result } = beat.coachNotes
+    const notes = (reviews[ticket] ?? []).filter((a) => a.result === result).flatMap((a) => a.notes ?? [])
+    notes.forEach((n, i) =>
+      beats.push({
+        id: `${beat.id}-n${i + 1}`,
+        channel: beat.channel,
+        from: n.from,
+        text: n.text,
+        phase: beat.phase,
+        time: beat.time,
+        requires: { ...beat.requires, review: beat.coachNotes },
+      }),
+    )
+  }
+  return { ...raw, beats, reviews }
+}
+
+function meets(cond: Condition | undefined, progress: Progress, choices: ChoiceRecord[], reviews: Reviews) {
   if (!cond) return true
+  if (cond.review && !hasReview(reviews, cond.review.ticket, cond.review.result)) return false
   if (cond.choice) {
     const [beat, choice] = cond.choice.split(':')
     if (pickedChoice(choices, beat)?.choice !== choice) return false
@@ -28,6 +61,10 @@ export function dayOf(beat: Beat) {
 export function ticketStatus(story: Story, progress: Progress, day: number): TicketStatus {
   const d = story.days.find((x) => x.day === day)
   if (!d) return 'locked'
+  const attempts = story.reviews[d.ticket] ?? []
+  const last = attempts[attempts.length - 1]
+  if (last?.result === 'pass') return 'done'
+  if (last?.result === 'redo') return 'changes'
   const explicit = progress.tickets[d.ticket]
   if (explicit) return explicit
   return progress.lessons[d.lesson]?.passed ? 'open' : 'locked'
@@ -60,7 +97,7 @@ export function visibleBeats(
   for (const beat of story.beats) {
     if (beat.channel !== channel) continue
     if (!phaseUnlocked(beat, story, progress)) continue
-    if (!meets(beat.requires, progress, choices)) continue
+    if (!meets(beat.requires, progress, choices, story.reviews)) continue
     out.push(beat)
     if (beat.choices?.length && !pickedChoice(choices, beat.id)) break
   }
