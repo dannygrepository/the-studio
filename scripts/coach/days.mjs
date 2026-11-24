@@ -97,7 +97,7 @@ function usedPullRequests(min) {
   return item(`Opened at least ${min} pull request(s) in total`, n >= min, `${n} found`)
 }
 
-function courtItems(list, label = 'Commit messages pass Commit Court') {
+function courtItems(list, label = 'Commit messages pass Commit Court', level = 'warn') {
   const own = list.filter((c) => !c.email.endsWith(STUDIO_DOMAIN) && !isGeneratedSubject(c.subject) && c.parents.length < 2)
   const bad = own.map((c) => ({ c, p: commitProblems(c.subject) })).filter((x) => x.p.length)
   return item(
@@ -108,7 +108,7 @@ function courtItems(list, label = 'Commit messages pass Commit Court') {
       : bad.length
         ? bad.map((x) => `"${x.c.subject}": ${x.p.join(', ')}`).join('; ')
         : own.map((c) => `"${c.subject}"`).join(', '),
-    'warn',
+    level,
   )
 }
 
@@ -149,7 +149,7 @@ export const DAYS = {
         out.push(item('Changes only src/content/team.ts', files.length === 1 && files[0] === 'src/content/team.ts', files.join(', ')))
         const entry = show(ref, 'src/content/team.ts') ?? ''
         out.push(item('newHire is filled in', !/newHire: TeamMember \| null = null/.test(entry)))
-        out.push(courtItems(commits(`${MAIN}..${ref}`)))
+        out.push(courtItems(commits(`${MAIN}..${ref}`), undefined, 'required'))
         out.push(...checksPass(ref, 'Their branch'))
       }
       out.push(mainUntouched())
@@ -205,7 +205,7 @@ export const DAYS = {
         const mine = commits(`${MAIN}..${ref}`)
         const mentions = culprit && mine.some((c) => c.body.includes(culprit.short) || c.body.includes(culprit.hash.slice(0, 8)))
         out.push(item('Commit message names the culprit commit hash', mentions, culprit ? `Looking for ${culprit.short}` : ''))
-        out.push(courtItems(mine))
+        out.push(courtItems(mine, undefined, 'required'))
         out.push(...checksPass(ref, 'Their branch'))
       }
       out.push(mainUntouched())
@@ -506,7 +506,18 @@ export function UnreadBadge({ count, onClick }: { count: number; onClick?: () =>
       const out = []
       const bad = findCastCommit('Make the app more fun for Friday')
       const gus = findCastCommit('Add a deploy checklist to the README')
-      if (!bad || !gus) return [item('Day 8 setup found', false, 'Run `npm run coach -- setup 8`')]
+      if (!bad || !gus) {
+        const recorded = /Record STU-7 review: pass/.test(tryGit(['log', '--format=%s', MAIN]) ?? '')
+        return [
+          recorded
+            ? item(
+                "History wasn't rewritten (no reset + force push)",
+                false,
+                "Bjorn's and Gus's Day 8 commits are gone from main: someone reset and force-pushed. That erased Gus's work too. Recover with `git reflog` (find the old main), push it back, then revert properly.",
+              )
+            : item('Day 8 setup found', false, 'Run `npm run coach -- setup 8`'),
+        ]
+      }
       out.push(item("History wasn't rewritten (no reset + force push)", isAncestor(bad.hash, MAIN) && isAncestor(gus.hash, MAIN)))
       const before = show(`${bad.hash}~1`, 'src/styles/tokens.css')
       const now = show(MAIN, 'src/styles/tokens.css')
