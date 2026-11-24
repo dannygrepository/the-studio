@@ -18,7 +18,7 @@ const ROUNDS = [
     options: ['Add Avatar component using size tokens', 'avatar', 'Adding a new avatar component for the chat app with sizes'],
   },
   {
-    change: "You replaced a hard-coded gray with the muted-foreground token. Dot is thrilled.",
+    change: "You replaced a hard-coded gray with the muted-foreground token. Dotty is thrilled.",
     options: ['Changes', 'Update colors.', 'Use muted-foreground token for hard-coded gray'],
   },
   {

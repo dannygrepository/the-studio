@@ -1,15 +1,27 @@
 import { useState } from 'react'
-import { CloudUpload, GitBranch, GitCommitHorizontal, Repeat } from 'lucide-react'
+import {
+  Check,
+  CloudUpload,
+  Cloud,
+  CloudOff,
+  GitBranch,
+  GitCommitHorizontal,
+  Laptop,
+  MapPin,
+  Repeat,
+  RotateCcw,
+} from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { CommandBreakdown } from '@/components/git/GitCommand'
 import { cn } from '@/lib/utils'
 
+/** One copy of the project: main's commits, plus your branch's (null = no branch yet). */
 interface Repo {
-  main: number
-  branchFrom: number | null
-  branch: number
+  main: string[]
+  branch: string[] | null
 }
 
 interface State {
@@ -20,105 +32,275 @@ interface State {
 }
 
 const BRANCH = 'explore/new-header'
+const MAIN_HISTORY = ['Set up the chat app', 'Add design tokens']
+/** What each new commit on your branch is "about". */
+const MESSAGES = ['Try a bolder header', 'Tighten header spacing', 'Add a search icon', 'Swap header to primary']
 
-function Graph({ repo, head, label }: { repo: Repo; head?: 'main' | 'branch'; label: string }) {
-  const step = 48
-  const x = (i: number) => 28 + i * step
-  const mainY = 28
-  const branchY = 80
-  const width = Math.max(x(repo.main - 1), repo.branchFrom === null ? 0 : x(repo.branchFrom + repo.branch)) + 60
+const START: State = {
+  local: { main: MAIN_HISTORY, branch: null },
+  remote: { main: MAIN_HISTORY, branch: null },
+  head: 'main',
+  log: "You just cloned the repo. Your laptop and GitHub have the same two commits on main. You're on main.",
+}
+
+/* ------------------------------------------------------------------ */
+/* Pieces                                                               */
+/* ------------------------------------------------------------------ */
+
+function CommitRow({
+  message,
+  inherited,
+  unpushed,
+}: {
+  message: string
+  inherited?: boolean
+  unpushed?: boolean
+}) {
   return (
-    <div className="overflow-x-auto">
-      <div className="mb-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase">{label}</div>
-      <svg viewBox={`0 0 ${Math.max(width, 280)} 108`} className="h-28 w-full min-w-72" role="img" aria-label={`${label} commit graph`}>
-        {/* main lane */}
-        {repo.main > 1 && <line x1={x(0)} y1={mainY} x2={x(repo.main - 1)} y2={mainY} className="stroke-muted-foreground" strokeWidth={3} />}
-        {Array.from({ length: repo.main }, (_, i) => (
-          <circle key={`m${i}`} cx={x(i)} cy={mainY} r={10} className={cn('fill-primary', head === 'main' && i === repo.main - 1 && 'stroke-foreground')} strokeWidth={3} />
-        ))}
-        <text x={x(repo.main - 1) + 18} y={mainY + 4} className="fill-foreground text-xs font-semibold">main</text>
+    <li
+      className={cn(
+        'flex items-center gap-2 rounded-md border bg-card px-2 py-1.5 text-sm motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-1',
+        inherited && 'border-dashed bg-transparent text-muted-foreground',
+        unpushed && 'border-warning bg-warning/15',
+      )}
+    >
+      {unpushed ? (
+        <CloudOff className="size-4 shrink-0 text-warning-foreground" aria-label="Not on GitHub yet" />
+      ) : (
+        <GitCommitHorizontal className="size-4 shrink-0 text-muted-foreground" />
+      )}
+      <span className="min-w-0 flex-1">{message}</span>
+      {inherited && <span className="shrink-0 text-xs">from main</span>}
+    </li>
+  )
+}
 
-        {repo.branchFrom !== null && (
-          <>
-            <path
-              d={`M ${x(repo.branchFrom)} ${mainY} C ${x(repo.branchFrom)} ${branchY}, ${x(repo.branchFrom)} ${branchY}, ${x(repo.branchFrom + 1)} ${branchY}`}
-              className="fill-none stroke-cast-dot"
-              strokeWidth={3}
-              opacity={repo.branch ? 1 : 0.3}
-            />
-            {repo.branch > 1 && <line x1={x(repo.branchFrom + 1)} y1={branchY} x2={x(repo.branchFrom + repo.branch)} y2={branchY} className="stroke-cast-dot" strokeWidth={3} />}
-            {Array.from({ length: repo.branch }, (_, i) => (
-              <circle key={`b${i}`} cx={x(repo.branchFrom! + 1 + i)} cy={branchY} r={10} className={cn('fill-cast-dot', head === 'branch' && i === repo.branch - 1 && 'stroke-foreground')} strokeWidth={3} />
-            ))}
-            <text x={x(repo.branchFrom + Math.max(repo.branch, 1)) + 18} y={branchY + 4} className="fill-foreground text-xs font-semibold">
-              {BRANCH}
-            </text>
-          </>
+function BranchCard({
+  name,
+  own,
+  inherited = [],
+  unpushed = 0,
+  here,
+  tone,
+}: {
+  name: string
+  /** Commits made on this branch, oldest first. */
+  own: string[]
+  /** Commits copied from main when the branch was made. */
+  inherited?: string[]
+  /** How many of the newest own commits aren't on GitHub. */
+  unpushed?: number
+  here?: boolean
+  tone: 'main' | 'branch'
+}) {
+  // Newest first, like a version history panel.
+  const rows = [
+    ...own.map((m, i) => ({ m, inherited: false, unpushed: i >= own.length - unpushed })).reverse(),
+    ...inherited.map((m) => ({ m, inherited: true, unpushed: false })).reverse(),
+  ]
+  return (
+    <div
+      className={cn(
+        'flex flex-col gap-2 rounded-lg border-2 bg-background p-3 transition-colors',
+        here ? (tone === 'main' ? 'border-primary' : 'border-cast-dot') : 'border-transparent',
+      )}
+    >
+      <div className="flex flex-wrap items-center gap-2">
+        <GitBranch className={cn('size-4 shrink-0', tone === 'main' ? 'text-primary' : 'text-cast-dot')} />
+        <span className="min-w-0 flex-1 font-mono text-sm font-semibold break-all">{name}</span>
+        {here && (
+          <Badge variant={tone === 'main' ? 'default' : 'secondary'} className="shrink-0">
+            <MapPin /> You are here
+          </Badge>
         )}
-      </svg>
+      </div>
+      <ul className="flex flex-col gap-1">
+        {rows.length ? (
+          rows.map((r, i) => (
+            <CommitRow key={`${r.m}-${i}`} message={r.m} inherited={r.inherited} unpushed={r.unpushed} />
+          ))
+        ) : (
+          <li className="text-sm text-muted-foreground">No commits yet.</li>
+        )}
+      </ul>
+      {unpushed > 0 && (
+        <p className="flex items-center gap-2 rounded-md bg-warning/15 px-2 py-1.5 text-xs text-warning-foreground">
+          <CloudOff className="size-3.5 shrink-0" />
+          {unpushed === 1 ? '1 commit is' : `${unpushed} commits are`} only on your laptop. Push to share.
+        </p>
+      )}
     </div>
   )
 }
 
+function Place({
+  icon,
+  title,
+  caption,
+  children,
+}: {
+  icon: React.ReactNode
+  title: string
+  caption: string
+  children: React.ReactNode
+}) {
+  return (
+    <div className="flex flex-col gap-3 rounded-lg border bg-muted p-3">
+      <div>
+        <div className="flex items-center gap-2 font-semibold">
+          {icon} {title}
+        </div>
+        <div className="text-xs text-muted-foreground">{caption}</div>
+      </div>
+      {children}
+    </div>
+  )
+}
+
+function Steps({ done }: { done: boolean[] }) {
+  const labels = ['Make a branch', 'Commit', 'Commit again', 'Push to GitHub']
+  const next = done.indexOf(false)
+  return (
+    <ol className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+      {labels.map((label, i) => (
+        <li
+          key={label}
+          className={cn(
+            'flex items-center gap-2 rounded-md border px-2 py-1.5 text-sm',
+            done[i] && 'border-success bg-success/10',
+            i === next && 'border-primary bg-accent font-medium text-accent-foreground',
+            !done[i] && i !== next && 'text-muted-foreground',
+          )}
+        >
+          <span
+            className={cn(
+              'flex size-5 shrink-0 items-center justify-center rounded-full text-xs font-semibold',
+              done[i] ? 'bg-success text-success-foreground' : i === next ? 'bg-primary text-primary-foreground' : 'bg-muted',
+            )}
+          >
+            {done[i] ? <Check className="size-3" /> : i + 1}
+          </span>
+          {label}
+        </li>
+      ))}
+    </ol>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* Playground                                                           */
+/* ------------------------------------------------------------------ */
+
 export function BranchPlayground({ onComplete, complete }: { onComplete: () => void; complete: boolean }) {
-  const [s, setS] = useState<State>({
-    local: { main: 2, branchFrom: null, branch: 0 },
-    remote: { main: 2, branchFrom: null, branch: 0 },
-    head: 'main',
-    log: "You just cloned the repo. Your laptop and GitHub have the same two commits. You're on main.",
+  const [s, setS] = useState<State>(START)
+  // The command shown in the breakdown: whatever you're pointing at, else the last one you ran.
+  const [pointing, setPointing] = useState<string | null>(null)
+  const [last, setLast] = useState<string | null>(null)
+
+  const localBranch = s.local.branch
+  const remoteBranch = s.remote.branch
+  const nextMessage = MESSAGES[Math.min(localBranch?.length ?? 0, MESSAGES.length - 1)]
+  const unpushed = (localBranch?.length ?? 0) - (remoteBranch?.length ?? 0)
+
+  const CMD = {
+    branch: `git switch -c ${BRANCH}`,
+    commit: `git commit -m "${nextMessage}"`,
+    switch: `git switch ${s.head === 'main' ? BRANCH : 'main'}`,
+    push: s.head === 'branch' ? `git push -u origin ${BRANCH}` : 'git push',
+  }
+  const explained = pointing ?? last ?? CMD.branch
+
+  /** Hover, focus, and click all point the breakdown at this command. */
+  const cmdProps = (command: string, action: () => void) => ({
+    onMouseEnter: () => setPointing(command),
+    onMouseLeave: () => setPointing(null),
+    onFocus: () => setPointing(command),
+    onBlur: () => setPointing(null),
+    onClick: () => {
+      setLast(command)
+      action()
+    },
   })
 
   const update = (next: State) => {
     setS(next)
-    if (next.remote.branchFrom !== null && next.remote.branch >= 2) onComplete()
-  }
-
-  const commit = () => {
-    if (s.head === 'main') {
-      update({ ...s, log: "Gus: Not on main. Nobody commits to main directly. Make a branch first, so your experiment can't break the real thing." })
-      return
-    }
-    const local = { ...s.local, branch: s.local.branch + 1 }
-    update({ ...s, local, log: `Committed! That's a snapshot of your work with a note attached. It only exists on your laptop until you push. (${local.branch} on your branch)` })
+    if ((next.remote.branch?.length ?? 0) >= 2) onComplete()
   }
 
   const branch = () => {
-    if (s.local.branchFrom !== null) {
+    if (localBranch) {
       update({ ...s, log: 'You already have a branch. One exploration at a time, Bjorn.' })
       return
     }
     update({
       ...s,
-      local: { ...s.local, branchFrom: s.local.main - 1 },
+      local: { ...s.local, branch: [] },
       head: 'branch',
-      log: `Created ${BRANCH} and switched to it. Like duplicating a Figma page to explore: main is untouched.`,
+      log: `Made ${BRANCH} and moved onto it. It starts as a copy of main (the faded commits), like duplicating a Figma page. Main is untouched.`,
+    })
+  }
+
+  const commit = () => {
+    if (s.head === 'main' || !localBranch) {
+      update({
+        ...s,
+        log: "Gus: Not on main. Nobody commits to main directly. Make a branch first, so your experiment can't break the real thing.",
+      })
+      return
+    }
+    if (localBranch.length >= MESSAGES.length) {
+      update({ ...s, log: "That's plenty of commits for one exploration. Push them!" })
+      return
+    }
+    update({
+      ...s,
+      local: { ...s.local, branch: [...localBranch, nextMessage] },
+      log: `Saved a snapshot called "${nextMessage}". Notice it's yellow: it only exists on your laptop until you push.`,
     })
   }
 
   const switchBranch = () => {
-    if (s.local.branchFrom === null) return
+    if (!localBranch) return
     const head = s.head === 'main' ? 'branch' : 'main'
-    update({ ...s, head, log: `Switched to ${head === 'main' ? 'main' : BRANCH}. Your files now show that branch's version.` })
+    update({
+      ...s,
+      head,
+      log:
+        head === 'main'
+          ? "Back on main. Your files now look like main again. Your branch's commits are safe; they're just not here."
+          : `Back on ${BRANCH}. Your files show your exploration again.`,
+    })
   }
 
   const push = () => {
-    if (s.head === 'main' || s.local.branchFrom === null) {
+    if (s.head === 'main' || !localBranch) {
       update({ ...s, log: 'Nothing new on main to push. Switch to your branch and push that.' })
       return
     }
-    if (s.local.branch === 0) {
+    if (localBranch.length === 0) {
       update({ ...s, log: 'Your branch has no commits yet. Commit something first.' })
+      return
+    }
+    if (unpushed === 0) {
+      update({ ...s, log: 'GitHub already has everything. Make another commit if you want something new to push.' })
       return
     }
     update({
       ...s,
       remote: { ...s.local },
       log:
-        s.local.branch >= 2
-          ? '🎉 Pushed! GitHub now has your branch with both commits. Teammates can see it, review it, and (eventually) merge it.'
-          : 'Pushed! GitHub has your branch now. Make one more commit and push again to finish.',
+        localBranch.length >= 2
+          ? `🎉 Pushed! GitHub now has ${BRANCH} with your commits. Teammates can see it, review it, and (eventually) merge it.`
+          : 'Pushed! Your branch is on GitHub now. Make one more commit and push again to finish.',
     })
   }
+
+  const steps = [
+    localBranch !== null,
+    (localBranch?.length ?? 0) >= 1,
+    (localBranch?.length ?? 0) >= 2,
+    (remoteBranch?.length ?? 0) >= 2,
+  ]
 
   return (
     <Card className="gap-4">
@@ -127,35 +309,82 @@ export function BranchPlayground({ onComplete, complete }: { onComplete: () => v
           Branch playground {complete && <Badge variant="success">Complete</Badge>}
         </CardTitle>
         <CardDescription>
-          Goal: create a branch, make <strong>2 commits</strong> on it, and <strong>push</strong> it to GitHub. Watch both
-          graphs.
+          Make a branch, save two commits on it, and push it to GitHub. Watch what shows up where.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
+        <Steps done={steps} />
+
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="rounded-lg border bg-background p-3">
-            <Graph repo={s.local} head={s.head} label="💻 Your laptop (local)" />
-          </div>
-          <div className="rounded-lg border bg-background p-3">
-            <Graph repo={s.remote} label="☁️ GitHub (origin)" />
-          </div>
+          <Place icon={<Laptop className="size-4" />} title="Your laptop" caption="Your copy. Commits land here first.">
+            <BranchCard name="main" own={s.local.main} here={s.head === 'main'} tone="main" />
+            {localBranch && (
+              <BranchCard
+                name={BRANCH}
+                own={localBranch}
+                inherited={s.local.main}
+                unpushed={unpushed}
+                here={s.head === 'branch'}
+                tone="branch"
+              />
+            )}
+          </Place>
+
+          <Place icon={<Cloud className="size-4" />} title="GitHub (origin)" caption="The shared copy. The team only sees this.">
+            <BranchCard name="main" own={s.remote.main} tone="main" />
+            {remoteBranch ? (
+              <BranchCard name={BRANCH} own={remoteBranch} inherited={s.remote.main} tone="branch" />
+            ) : (
+              localBranch && (
+                <div className="rounded-lg border-2 border-dashed p-3 text-sm text-muted-foreground">
+                  <span className="font-mono">{BRANCH}</span> isn't here yet. Only you can see it until you
+                  push.
+                </div>
+              )
+            )}
+          </Place>
         </div>
+
         <div className="rounded-lg bg-accent p-3 text-sm text-accent-foreground" aria-live="polite">
           {s.log}
         </div>
+
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" onClick={branch}>
-            <GitBranch /> git switch -c
+          <Button variant="outline" className="font-mono" {...cmdProps(CMD.branch, branch)}>
+            <GitBranch /> {CMD.branch}
           </Button>
-          <Button variant="outline" onClick={commit}>
-            <GitCommitHorizontal /> git commit
+          <Button variant="outline" className="font-mono" {...cmdProps(CMD.commit, commit)}>
+            <GitCommitHorizontal /> {CMD.commit}
           </Button>
-          <Button variant="outline" onClick={switchBranch} disabled={s.local.branchFrom === null}>
-            <Repeat /> git switch {s.head === 'main' ? 'branch' : 'main'}
+          <Button
+            variant="outline"
+            className="font-mono"
+            disabled={!localBranch}
+            {...cmdProps(CMD.switch, switchBranch)}
+          >
+            <Repeat /> {CMD.switch}
           </Button>
-          <Button onClick={push}>
-            <CloudUpload /> git push
+          <Button className="font-mono" {...cmdProps(CMD.push, push)}>
+            <CloudUpload /> {CMD.push}
           </Button>
+          <Button
+            variant="ghost"
+            className="ml-auto text-muted-foreground"
+            onClick={() => {
+              setS(START)
+              setLast(null)
+            }}
+            disabled={s === START}
+          >
+            <RotateCcw /> Reset
+          </Button>
+        </div>
+
+        <div className="flex flex-col gap-2 rounded-lg border bg-background p-4">
+          <div className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+            What this command means · hover any button
+          </div>
+          <CommandBreakdown command={explained} />
         </div>
       </CardContent>
     </Card>

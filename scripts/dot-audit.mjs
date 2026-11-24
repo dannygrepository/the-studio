@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Dot's token audit. Run with `npm run dot`.
+ * Dotty's token audit. Run with `npm run dot`.
  *
  * Fails if any file in src/ (except src/styles/tokens.css) hard-codes a
  * design value instead of using a token:
@@ -44,9 +44,9 @@ for (const file of walk(ROOT)) {
 }
 
 if (findings.length) {
-  console.log(`\n💜 Dot: I found ${findings.length} hard-coded value${findings.length > 1 ? 's' : ''}. We talked about this.\n`)
+  console.log(`\n💜 Dotty: I found ${findings.length} hard-coded value${findings.length > 1 ? 's' : ''}. We talked about this.\n`)
   for (const f of findings) console.log('  ' + f)
   console.log('\n   Use a token from src/styles/tokens.css instead.\n')
   process.exit(1)
 }
-console.log('💜 Dot: Token audit passed. Every value is a token. I could cry.')
+console.log('💜 Dotty: Token audit passed. Every value is a token. I could cry.')

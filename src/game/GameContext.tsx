@@ -19,6 +19,7 @@ interface GameValue {
   completeLessonPart: (lessonId: string, part: string, reward?: Reward) => void
   passLesson: (lessonId: string, reward?: Reward) => void
   markSeen: (beatIds: string[]) => void
+  setOnboarded: (done: boolean) => void
   resetGame: () => Promise<void>
 }
 
@@ -121,6 +122,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
+  const setOnboarded = useCallback((done: boolean) => {
+    setProgress((p) => (p.onboarded === done ? p : { ...p, onboarded: done }))
+  }, [])
+
   const resetGame = useCallback(async () => {
     loaded.current = false
     await reset()
@@ -141,6 +146,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         completeLessonPart,
         passLesson,
         markSeen,
+        setOnboarded,
         resetGame,
       }}
     >

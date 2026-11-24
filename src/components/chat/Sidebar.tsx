@@ -1,4 +1,4 @@
-import { BookOpen, Check, Hash, Lock, Users } from 'lucide-react'
+import { BookA, BookOpen, Check, Hash, Lock, Users } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -68,6 +68,15 @@ export function Sidebar() {
                 <Lock className="size-4" /> Day {d.day}: {d.title}
               </div>
             ))}
+          <Button
+            variant="sidebar"
+            size="row"
+            className={active(view.type === 'dictionary')}
+            onClick={() => go({ type: 'dictionary' })}
+          >
+            <BookA />
+            <span className="flex-1 text-left">Git dictionary</span>
+          </Button>
         </Section>
 
         <Section title="Channels">

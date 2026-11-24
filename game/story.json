@@ -27,7 +27,7 @@
       "status": "☕ Reviewing. Sighing."
     },
     "dot": {
-      "name": "Dot Lindqvist",
+      "name": "Dotty Lindqvist",
       "role": "Design System Lead",
       "initials": "DL",
       "color": "dot",
@@ -65,7 +65,7 @@
       "id": "design-system",
       "name": "design-system",
       "kind": "channel",
-      "topic": "Tokens are law. — Dot"
+      "topic": "Tokens are law. — Dotty"
     },
     {
       "id": "dm-priya",
@@ -83,7 +83,7 @@
     },
     {
       "id": "dm-dot",
-      "name": "Dot",
+      "name": "Dotty",
       "kind": "dm",
       "with": "dot",
       "topic": "Direct message"
@@ -181,7 +181,7 @@
         "Your `onboarding/...` branch exists on GitHub",
         "It has a commit that changes only `src/content/team.ts`",
         "The commit message passes Commit Court: imperative, capitalized, no period, 50 characters or fewer",
-        "`favoriteToken` is a real token name (Dot will check, and so will TypeScript)",
+        "`favoriteToken` is a real token name (Dotty will check, and so will TypeScript)",
         "`main` is untouched. Nobody pushes to main."
       ],
       "xp": 50
@@ -499,7 +499,7 @@
       "id": "d1-060",
       "channel": "dm-dot",
       "from": "dot",
-      "text": "Hi! I'm Dot. I keep the design system honest. We use **shadcn/ui**, and all of our tokens live in one file: `src/styles/tokens.css`. Components only ever reference those. If you're ever unsure whether something is a token, run `npm run dot` and I'll tell you. (It's a script. It's also me.)",
+      "text": "Hi! I'm Dotty. I keep the design system honest. We use **shadcn/ui**, and all of our tokens live in one file: `src/styles/tokens.css`. Components only ever reference those. If you're ever unsure whether something is a token, run `npm run dot` and I'll tell you. (It's a script. It's also me.)",
       "phase": "intro",
       "time": "9:30 AM"
     },
