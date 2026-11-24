@@ -15,6 +15,7 @@ import {
   edit,
   git,
   isAncestor,
+  playerEmail,
   pullRequestCount,
   remoteBranches,
   remoteUrl,
@@ -50,8 +51,13 @@ function findCastCommit(subject, ref = MAIN) {
   )
 }
 
-/** Commits on main's first-parent line the player pushed directly (not via a merged PR). */
+/**
+ * Commits on main's first-parent line the player pushed directly (not via a
+ * merged PR). Only commits authored with the player's own git email count, so
+ * the game's starting history never does.
+ */
 function directPushes() {
+  const me = playerEmail()
   const SEP = '\u001f'
   const out = tryGit(['log', '--first-parent', `--format=%H${SEP}%ae${SEP}%ce${SEP}%s${SEP}%P`, MAIN]) ?? ''
   return out
@@ -63,6 +69,7 @@ function directPushes() {
     })
     .filter(
       (c) =>
+        (me ? c.ae === me : true) &&
         !c.ae.endsWith(STUDIO_DOMAIN) &&
         !c.ce.endsWith(STUDIO_DOMAIN) &&
         c.ce !== 'noreply@github.com' &&

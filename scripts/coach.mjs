@@ -51,7 +51,7 @@ function setupDone(day) {
 
 function runSetup(dir, day) {
   const extra = DAYS[day].setup?.(dir) ?? []
-  commitAs(dir, 'coach', `Set up Day ${day}`, 0)
+  commitAs(dir, 'coach', `Set up Day ${day}`, 0, { allowEmpty: true })
   return extra
 }
 

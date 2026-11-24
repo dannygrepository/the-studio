@@ -105,11 +105,11 @@ export function withWorktree(base, fn) {
 }
 
 /** Commit everything in `cwd` as one of the cast. */
-export function commitAs(cwd, who, message, minutesAgo = 0) {
+export function commitAs(cwd, who, message, minutesAgo = 0, { allowEmpty = false } = {}) {
   const p = PEOPLE[who]
   const date = new Date(Date.now() - minutesAgo * 60_000).toISOString()
   git(['add', '-A'], { cwd })
-  git(['commit', '--quiet', '-m', message], {
+  git(['commit', '--quiet', ...(allowEmpty ? ['--allow-empty'] : []), '-m', message], {
     cwd,
     env: {
       GIT_AUTHOR_NAME: p.name,
@@ -121,6 +121,11 @@ export function commitAs(cwd, who, message, minutesAgo = 0) {
     },
   })
   return git(['rev-parse', 'HEAD'], { cwd })
+}
+
+/** The player's git email in this clone (how we tell their commits apart). */
+export function playerEmail(cwd = ROOT) {
+  return tryGit(['config', 'user.email'], { cwd }) || null
 }
 
 export function read(cwd, file) {
