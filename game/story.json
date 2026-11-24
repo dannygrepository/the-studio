@@ -1,0 +1,578 @@
+{
+  "meta": {
+    "title": "The Studio",
+    "company": "The Studio",
+    "version": 1
+  },
+  "cast": {
+    "you": {
+      "name": "New Hire",
+      "role": "Product Designer",
+      "initials": "NH",
+      "color": "you",
+      "status": "Just started"
+    },
+    "priya": {
+      "name": "Priya Raman",
+      "role": "PM",
+      "initials": "PR",
+      "color": "priya",
+      "status": "📅 In 6 meetings, all 'quick'"
+    },
+    "gus": {
+      "name": "Gus Okafor",
+      "role": "Senior Engineer",
+      "initials": "GO",
+      "color": "gus",
+      "status": "☕ Reviewing. Sighing."
+    },
+    "dot": {
+      "name": "Dot Lindqvist",
+      "role": "Design System Lead",
+      "initials": "DL",
+      "color": "dot",
+      "status": "🎨 Auditing tokens"
+    },
+    "bjorn": {
+      "name": "Bjorn Halvorsen",
+      "role": "Intern",
+      "initials": "BH",
+      "color": "bjorn",
+      "status": "🚀 Pushing (where?)"
+    },
+    "ci3po": {
+      "name": "CI-3PO",
+      "role": "Build Bot",
+      "initials": "C3",
+      "color": "bot",
+      "status": "🟢 Passing. For now."
+    }
+  },
+  "channels": [
+    {
+      "id": "general",
+      "name": "general",
+      "kind": "channel",
+      "topic": "Company-wide. Be nice. Priya is watching the emoji reactions."
+    },
+    {
+      "id": "eng",
+      "name": "eng",
+      "kind": "channel",
+      "topic": "Builds, branches, and Bjorn incident reports"
+    },
+    {
+      "id": "design-system",
+      "name": "design-system",
+      "kind": "channel",
+      "topic": "Tokens are law. — Dot"
+    },
+    {
+      "id": "dm-priya",
+      "name": "Priya",
+      "kind": "dm",
+      "with": "priya",
+      "topic": "Direct message"
+    },
+    {
+      "id": "dm-gus",
+      "name": "Gus",
+      "kind": "dm",
+      "with": "gus",
+      "topic": "Direct message"
+    },
+    {
+      "id": "dm-dot",
+      "name": "Dot",
+      "kind": "dm",
+      "with": "dot",
+      "topic": "Direct message"
+    },
+    {
+      "id": "dm-bjorn",
+      "name": "Bjorn",
+      "kind": "dm",
+      "with": "bjorn",
+      "topic": "Direct message"
+    }
+  ],
+  "days": [
+    {
+      "day": 1,
+      "title": "Onboarding",
+      "subtitle": "Clone, branch, commit, push",
+      "lesson": "day1",
+      "ticket": "STU-1"
+    },
+    {
+      "day": 2,
+      "title": "Reading history",
+      "subtitle": "log, diff, blame",
+      "lesson": "day2",
+      "ticket": "STU-2"
+    },
+    {
+      "day": 3,
+      "title": "Your first PR",
+      "subtitle": "Gus reviews your PR",
+      "lesson": "day3",
+      "ticket": "STU-3"
+    },
+    {
+      "day": 4,
+      "title": "Bjorn's merge conflict",
+      "subtitle": "Boss fight",
+      "lesson": "day4",
+      "ticket": "STU-4"
+    },
+    {
+      "day": 5,
+      "title": "Deadline juggling",
+      "subtitle": "stash, rebase, cherry-pick",
+      "lesson": "day5",
+      "ticket": "STU-5"
+    },
+    {
+      "day": 6,
+      "title": "Building with AI",
+      "subtitle": "A token-only component",
+      "lesson": "day6",
+      "ticket": "STU-6"
+    },
+    {
+      "day": 7,
+      "title": "Reviewing AI code",
+      "subtitle": "Design system and a11y review",
+      "lesson": "day7",
+      "ticket": "STU-7"
+    },
+    {
+      "day": 8,
+      "title": "Friday outage",
+      "subtitle": "Revert a bad deploy",
+      "lesson": "day8",
+      "ticket": "STU-8"
+    },
+    {
+      "day": 9,
+      "title": "The big ship",
+      "subtitle": "Ticket to merged PR",
+      "lesson": "day9",
+      "ticket": "STU-9"
+    }
+  ],
+  "tickets": [
+    {
+      "id": "STU-1",
+      "title": "Add yourself to the team directory",
+      "from": "gus",
+      "summary": "The People page has an empty spot reserved for you. Fill it in, on a branch, with a commit message I can respect.",
+      "branch": "onboarding/add-<your-name>",
+      "steps": [
+        "In your real terminal, inside the `the-studio` folder, start from fresh main: `git switch main` then `git pull`",
+        "Create your branch: `git switch -c onboarding/add-<your-name>` (lowercase, dashes, no spaces)",
+        "Open `src/content/team.ts` and replace `null` in `newHire` with your entry. Save, then check the People page in the app.",
+        "Look before you leap: `git status` and `git diff`",
+        "Stage and commit: `git add src/content/team.ts` then `git commit -m \"...\"` with a message that would survive Commit Court",
+        "Publish your branch: `git push -u origin onboarding/add-<your-name>`",
+        "Tell your coach **done** in the project thread. Stuck? Say **hint**."
+      ],
+      "acceptance": [
+        "Your `onboarding/...` branch exists on GitHub",
+        "It has a commit that changes only `src/content/team.ts`",
+        "The commit message passes Commit Court: imperative, capitalized, no period, 50 characters or fewer",
+        "`favoriteToken` is a real token name (Dot will check, and so will TypeScript)",
+        "`main` is untouched. Nobody pushes to main."
+      ],
+      "xp": 50
+    }
+  ],
+  "beats": [
+    {
+      "id": "d1-001",
+      "channel": "general",
+      "from": "ci3po",
+      "text": "🤖 Good morning. Build status: **green**. Enjoy it. It won't last.",
+      "phase": "intro",
+      "time": "9:00 AM"
+    },
+    {
+      "id": "d1-002",
+      "channel": "general",
+      "from": "priya",
+      "text": "Everyone please welcome our new Product Designer, **{name}**! 🎉 They'll be shipping real code with us, which is very exciting and only slightly terrifying for Gus.",
+      "phase": "intro",
+      "time": "9:01 AM",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Thanks Priya! Excited to be here. Where do I start?",
+          "reward": {
+            "xp": 5,
+            "rep": {
+              "priya": 1
+            }
+          },
+          "replies": [
+            {
+              "from": "priya",
+              "text": "Love the energy!! quick question 🙏 could you also redesign onboarding, settings, and the logo by Thursday? kidding. mostly. Gus has your first ticket."
+            }
+          ]
+        },
+        {
+          "id": "b",
+          "text": "Happy to be here. Fair warning: I know just enough git to be dangerous.",
+          "reward": {
+            "xp": 5,
+            "rep": {
+              "gus": 1,
+              "bjorn": 1
+            }
+          },
+          "replies": [
+            {
+              "from": "bjorn",
+              "text": "SAME 🙌 we should pair!!"
+            },
+            {
+              "from": "gus",
+              "text": "Please do not pair with Bjorn on your first day."
+            }
+          ]
+        },
+        {
+          "id": "c",
+          "text": "Hi all! Is there a design system I should know about before I touch anything?",
+          "reward": {
+            "xp": 5,
+            "rep": {
+              "dot": 2
+            }
+          },
+          "replies": [
+            {
+              "from": "dot",
+              "text": "Oh, I like you already. 💜 Come find me in #design-system."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d1-003",
+      "channel": "general",
+      "from": "bjorn",
+      "text": "welcome!!! heads up I pushed a small fix to main this morning so things might look slightly different 😅",
+      "phase": "intro",
+      "time": "9:04 AM"
+    },
+    {
+      "id": "d1-004",
+      "channel": "general",
+      "from": "gus",
+      "text": "Bjorn.",
+      "phase": "intro",
+      "time": "9:04 AM"
+    },
+    {
+      "id": "d1-005",
+      "channel": "general",
+      "from": "bjorn",
+      "text": "reverting 🫡",
+      "phase": "intro",
+      "time": "9:05 AM"
+    },
+    {
+      "id": "d1-010",
+      "channel": "eng",
+      "from": "ci3po",
+      "text": "Build #4187 ✅ passed.\nBuild #4188 ❌ failed (author: bjorn).\nBuild #4189 ✅ passed (author: gus, message: `Revert Bjorn's thing`).\nI am fine. Everything is fine.",
+      "phase": "intro",
+      "time": "9:06 AM"
+    },
+    {
+      "id": "d1-011",
+      "channel": "eng",
+      "from": "gus",
+      "text": "New hire. Before you get a ticket, do the Day 1 lesson in Studio Academy. I don't review commits from people who write `fixed stuff`.",
+      "phase": "intro",
+      "time": "9:10 AM",
+      "lesson": "day1"
+    },
+    {
+      "id": "d1-012",
+      "channel": "eng",
+      "from": "ci3po",
+      "text": "📋 Ticket **STU-1** assigned to {name}. I have pre-emptively drafted a failed build notification. Just in case.",
+      "phase": "ticket"
+    },
+    {
+      "id": "d1-020",
+      "channel": "design-system",
+      "from": "dot",
+      "text": "Welcome to #design-system 💜 House rules:\n1. Every color, space and font size comes from `src/styles/tokens.css`.\n2. If I find a hex code in a component, I will find **you**.\n3. Snacks are on Fridays.",
+      "phase": "intro",
+      "time": "9:12 AM"
+    },
+    {
+      "id": "d1-021",
+      "channel": "design-system",
+      "from": "dot",
+      "text": "Quick vibe check. Someone hard-codes `#6B5CE7` in a button because \"it's basically primary.\" What do you say?",
+      "phase": "intro",
+      "time": "9:13 AM",
+      "choices": [
+        {
+          "id": "a",
+          "text": "\"Basically primary\" isn't primary. Use the token.",
+          "reward": {
+            "xp": 5,
+            "rep": {
+              "dot": 2
+            }
+          },
+          "replies": [
+            {
+              "from": "dot",
+              "text": "💜 A person of taste. You may have a Friday snack early."
+            }
+          ]
+        },
+        {
+          "id": "b",
+          "text": "Ship it, we can clean it up later.",
+          "reward": {
+            "rep": {
+              "dot": -2,
+              "priya": 1
+            }
+          },
+          "replies": [
+            {
+              "from": "dot",
+              "text": "\"Later\" is where tokens go to die. I'm adding you to my watch list. Lovingly."
+            },
+            {
+              "from": "priya",
+              "text": "(I love shipping though 🙏)"
+            }
+          ]
+        },
+        {
+          "id": "c",
+          "text": "Is there a reason it's not a token? Maybe we need a new one.",
+          "reward": {
+            "xp": 5,
+            "rep": {
+              "dot": 1
+            }
+          },
+          "replies": [
+            {
+              "from": "dot",
+              "text": "Ooh, diplomatic. The answer is still \"use the token,\" but asking why is how good systems grow. Bring me proposals, not hex codes."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d1-030",
+      "channel": "dm-priya",
+      "from": "priya",
+      "text": "hiii quick question 🙏 when you have a sec (no rush!!) (kind of a rush) could you look at the onboarding flow? and the settings page. and maybe empty states. not today though! probably. let's sync!",
+      "phase": "intro",
+      "time": "9:20 AM",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Happy to! Can you put those in tickets so I can prioritize?",
+          "reward": {
+            "xp": 5,
+            "rep": {
+              "priya": 1,
+              "gus": 1
+            }
+          },
+          "replies": [
+            {
+              "from": "priya",
+              "text": "Tickets?? You're going to fit in great here. Making them now. (They will be enormous.)"
+            }
+          ]
+        },
+        {
+          "id": "b",
+          "text": "Sure, I'll do all of it today!",
+          "reward": {
+            "rep": {
+              "priya": 2,
+              "gus": -1
+            }
+          },
+          "replies": [
+            {
+              "from": "priya",
+              "text": "!!!! 🥹 legend"
+            },
+            {
+              "from": "priya",
+              "text": "(Gus just walked past my desk and sighed. Unrelated, probably.)"
+            }
+          ]
+        },
+        {
+          "id": "c",
+          "text": "I'm onboarding today. Can we look at this tomorrow?",
+          "reward": {
+            "xp": 5,
+            "rep": {
+              "gus": 1
+            }
+          },
+          "replies": [
+            {
+              "from": "priya",
+              "text": "Totally fair!! Boundaries! Love that for you. Tomorrow it is 🙏 (it's three tickets) (they're big)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d1-040",
+      "channel": "dm-bjorn",
+      "from": "bjorn",
+      "text": "hey!! welcome!! 🎉 pro tip: if git ever says \"rejected\" you can just add `--force` 💪",
+      "phase": "intro",
+      "time": "9:25 AM",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Doesn't --force overwrite other people's work on the remote?",
+          "reward": {
+            "xp": 10,
+            "rep": {
+              "gus": 1,
+              "bjorn": 1
+            }
+          },
+          "replies": [
+            {
+              "from": "bjorn",
+              "text": "...oh."
+            },
+            {
+              "from": "bjorn",
+              "text": "OH. that explains tuesday."
+            }
+          ]
+        },
+        {
+          "id": "b",
+          "text": "Ha, noted. Maybe I'll ask Gus first.",
+          "reward": {
+            "xp": 5,
+            "rep": {
+              "bjorn": 1
+            }
+          },
+          "replies": [
+            {
+              "from": "bjorn",
+              "text": "smart. gus knows everything. once he read a diff so hard it fixed itself"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d1-041",
+      "channel": "dm-bjorn",
+      "from": "bjorn",
+      "text": "anyway if you ever get a merge conflict it was probably me. sorry in advance 🙏",
+      "phase": "intro",
+      "time": "9:27 AM"
+    },
+    {
+      "id": "d1-060",
+      "channel": "dm-dot",
+      "from": "dot",
+      "text": "Hi! I'm Dot. I keep the design system honest. We use **shadcn/ui**, and all of our tokens live in one file: `src/styles/tokens.css`. Components only ever reference those. If you're ever unsure whether something is a token, run `npm run dot` and I'll tell you. (It's a script. It's also me.)",
+      "phase": "intro",
+      "time": "9:30 AM"
+    },
+    {
+      "id": "d1-050",
+      "channel": "dm-gus",
+      "from": "gus",
+      "text": "Gus. Senior engineer. I review commits. Most of them disappoint me.\nDo the Day 1 lesson in Studio Academy first. Then you get a ticket.",
+      "phase": "intro",
+      "time": "9:15 AM",
+      "lesson": "day1"
+    },
+    {
+      "id": "d1-051",
+      "channel": "dm-gus",
+      "from": "gus",
+      "text": "You passed the lesson. Fine. Here's your first ticket. Small, real, and I will be reading your commit message very carefully.",
+      "phase": "ticket",
+      "ticket": "STU-1"
+    },
+    {
+      "id": "d1-052",
+      "channel": "dm-gus",
+      "from": "gus",
+      "text": "Questions before you start?",
+      "phase": "ticket",
+      "choices": [
+        {
+          "id": "a",
+          "text": "What makes a commit message LGTM-worthy to you?",
+          "reward": {
+            "xp": 5,
+            "rep": {
+              "gus": 1
+            }
+          },
+          "replies": [
+            {
+              "from": "gus",
+              "text": "Specific. Imperative. Short. Tells me **what** changed, and in the body, **why**, if it isn't obvious. Like a good layer name."
+            }
+          ]
+        },
+        {
+          "id": "b",
+          "text": "Nope, I've got this.",
+          "replies": [
+            {
+              "from": "gus",
+              "text": "Confidence. We'll see."
+            }
+          ]
+        },
+        {
+          "id": "c",
+          "text": "Can I just push straight to main? It's a tiny change.",
+          "reward": {
+            "rep": {
+              "gus": -2
+            }
+          },
+          "replies": [
+            {
+              "from": "gus",
+              "text": "No. Nobody pushes to main. Bjorn pushes to main. Do you want to be Bjorn?"
+            },
+            {
+              "from": "gus",
+              "text": "(Bjorn, from across the office: \"hey!\")"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
