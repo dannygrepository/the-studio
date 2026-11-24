@@ -185,6 +185,204 @@
         "`main` is untouched. Nobody pushes to main."
       ],
       "xp": 50
+    },
+    {
+      "id": "STU-2",
+      "title": "Who broke the button?",
+      "from": "dot",
+      "summary": "Someone hard-coded a hex color into the default Button. Find the exact commit that did it, put the token back, and name the culprit commit in your message.",
+      "branch": "fix/button-color",
+      "steps": [
+        "Start fresh: `git switch main` then `git pull`",
+        "See the crime: `npm run dot` (Dotty's audit fails on main right now)",
+        "Investigate: `git log --oneline -- src/components/ui/button.tsx`, then `git show <hash>` or `git blame src/components/ui/button.tsx`",
+        "Branch: `git switch -c fix/button-color`",
+        "In `src/components/ui/button.tsx`, put the default variant back to `bg-primary` and `hover:bg-primary/90`. Run `npm run dot` until it passes.",
+        "Commit with a body that names the culprit: `git commit -am \"Restore primary token on default Button\" -m \"Introduced in <hash>.\"`",
+        "Push: `git push -u origin fix/button-color`",
+        "Switch back to Claude Code (your coach) and type **done**."
+      ],
+      "acceptance": [
+        "A `fix/...` branch is on GitHub",
+        "It changes only `src/components/ui/button.tsx`",
+        "`npm run dot` passes on your branch",
+        "Your commit message includes the short hash of the commit that broke it",
+        "Your subject line passes Commit Court"
+      ],
+      "xp": 75
+    },
+    {
+      "id": "STU-3",
+      "title": "Your first pull requests",
+      "from": "gus",
+      "summary": "Two branches, two pull requests. Merge your Button fix as a warm-up. Then open one for your directory entry. I will request a change. You will make it.",
+      "branch": "fix/button-color and onboarding/add-<your-name>",
+      "steps": [
+        "Start fresh: `git switch main` then `git pull`",
+        "On GitHub, open **your** repo → **Pull requests** → **New pull request**. Base: `main`. Compare: `fix/button-color`. Create it, then click **Merge pull request**.",
+        "Open a second pull request: base `main`, compare `onboarding/add-<your-name>`. Read Gus's review in his DM in the app.",
+        "Make Gus's change on that branch: `git switch onboarding/add-<your-name>`, then `git merge main` to bring in Priya's new `pronouns` field.",
+        "Add `pronouns` to your entry in `src/content/team.ts`. Commit it. `git push`. Watch the pull request update itself.",
+        "Merge the second pull request on GitHub.",
+        "Back home: `git switch main`, `git pull`, then tidy up with `git branch -d fix/button-color`",
+        "Switch back to Claude Code (your coach) and type **done**."
+      ],
+      "acceptance": [
+        "Your Button fix is merged into `main` (the build goes green)",
+        "Your directory entry is merged into `main`",
+        "Your entry has `pronouns`, the change Gus requested",
+        "You merged `main` into your branch before adding it",
+        "Everything reached `main` through pull requests, not direct pushes"
+      ],
+      "xp": 75
+    },
+    {
+      "id": "STU-4",
+      "title": "Rename the People page",
+      "from": "priya",
+      "summary": "Rename the People page to \"Team\" with the subtitle \"Who's who at The Studio\". Bjorn changed the same lines on his own branch. Merge his branch into yours and resolve it: **your title, his subtitle**.",
+      "branch": "copy/people-page",
+      "steps": [
+        "Start fresh: `git switch main` then `git pull`",
+        "Branch: `git switch -c copy/people-page`",
+        "In `src/content/copy.ts`, set `title` to `'Team'` and `subtitle` to `\"Who's who at The Studio\"`. Commit.",
+        "Bring in Bjorn's work: `git merge origin/bjorn/people-page-copy`. Git will stop with a **CONFLICT**. That's the boss.",
+        "`git status` shows the conflicted file. Open it. Keep **your title** and **Bjorn's subtitle**. Delete all three marker lines (`<<<<<<<`, `=======`, `>>>>>>>`).",
+        "Tell git it's resolved: `git add src/content/copy.ts`, then `git commit` (the message is pre-written; save and close).",
+        "Run `npm run check`, then `git push -u origin copy/people-page`",
+        "Open a pull request and merge it. Then `git switch main` and `git pull`.",
+        "Switch back to Claude Code (your coach) and type **done**."
+      ],
+      "acceptance": [
+        "Bjorn's branch is merged into `main`",
+        "The title is yours (\"Team\")",
+        "The subtitle is Bjorn's",
+        "No conflict markers anywhere",
+        "It reached `main` through a pull request"
+      ],
+      "xp": 100
+    },
+    {
+      "id": "STU-5",
+      "title": "Ship one fix from a half-done branch",
+      "from": "priya",
+      "summary": "There's a typo on the People page (\"quater\"). Bjorn already fixed it, on a branch full of half-done header experiments. Ship **only** his fix, today, without his experiments.",
+      "branch": "hotfix/people-footer-typo",
+      "steps": [
+        "Pretend you're mid-task: change any line in `src/content/copy.ts` and don't commit it.",
+        "Priya interrupts. Park your edit: `git stash`. (`git status` is clean now.)",
+        "Start fresh: `git switch main` then `git pull`",
+        "Find Bjorn's fix: `git log --oneline origin/bjorn/header-redesign`. You want the typo commit, nothing else.",
+        "Branch: `git switch -c hotfix/people-footer-typo`",
+        "Copy just that commit: `git cherry-pick <hash>`",
+        "Push, open a pull request, merge it. Then `git switch main` and `git pull`.",
+        "Bring your parked edit back: `git stash pop`. (Then throw it away with `git restore src/content/copy.ts`. It was pretend.)",
+        "Switch back to Claude Code (your coach) and type **done**."
+      ],
+      "acceptance": [
+        "The typo is fixed on `main`",
+        "None of Bjorn's header experiments reached `main`",
+        "A `hotfix/...` branch carries Bjorn's fix as a cherry-pick",
+        "It reached `main` through a pull request"
+      ],
+      "xp": 100
+    },
+    {
+      "id": "STU-6",
+      "title": "Build a StatusPill with AI",
+      "from": "priya",
+      "summary": "Priya added `presence` (available, busy, away) to the team directory. Build a `StatusPill` component that shows it, with AI as your pair. Dotty's rule: tokens only. Your rule: you read every line before you commit it.",
+      "branch": "feature/status-pill",
+      "steps": [
+        "Start fresh: `git switch main`, `git pull`, then `git switch -c feature/status-pill`",
+        "Ask your coach (Claude, in Claude Code) to draft `src/components/ui/status-pill.tsx`. Use Dotty's prompt recipe from the lesson.",
+        "Read the draft. Run `npm run dot`. If anything's hard-coded, ask for a fix or fix it yourself.",
+        "Commit the component on its own: `git add src/components/ui/status-pill.tsx`, then `git commit -m \"Add StatusPill component\"`",
+        "Use it on the People page next to each title (`src/components/chat/PeopleView.tsx`). Check it in the app. Commit that separately.",
+        "`npm run check`, push, open a pull request, merge it, `git switch main`, `git pull`.",
+        "Switch back to Claude Code (your coach) and type **done**."
+      ],
+      "acceptance": [
+        "A `StatusPill` component is on `main`",
+        "The People page uses it",
+        "`npm run dot` and the type check pass on `main`",
+        "Small, separate commits with good messages",
+        "It reached `main` through a pull request"
+      ],
+      "xp": 100
+    },
+    {
+      "id": "STU-7",
+      "title": "Review the AI pull request",
+      "from": "gus",
+      "summary": "Bjorn used AI to build an `UnreadBadge` for the sidebar. It \"looks great on his screen.\" It has at least seven problems. Find them, fix them on his branch, and merge it properly.",
+      "branch": "ai/unread-badge",
+      "steps": [
+        "Start fresh: `git switch main` then `git pull`",
+        "Check out Bjorn's branch: `git switch ai/unread-badge`",
+        "See what it changes: `git diff main...ai/unread-badge`",
+        "Run `npm run dot`. Dotty's audit catches some issues. Not all.",
+        "Fix them in `src/components/chat/UnreadBadge.tsx`: tokens only, a real button (or no click at all), a screen-reader label, and nothing when the count is 0.",
+        "Commit (one commit per kind of fix is ideal), `npm run check`, then `git push`",
+        "Open a pull request from `ai/unread-badge` and merge it. `git switch main`, `git pull`.",
+        "Switch back to Claude Code (your coach) and type **done**."
+      ],
+      "acceptance": [
+        "No hex colors, inline styles, or arbitrary pixel values",
+        "Nothing clickable is a `<div>`",
+        "Screen readers hear \"3 unread messages\", not \"3\"",
+        "Zero unread shows nothing",
+        "`npm run check` passes on `main`"
+      ],
+      "xp": 100
+    },
+    {
+      "id": "STU-8",
+      "title": "Friday outage",
+      "from": "gus",
+      "summary": "Bjorn deployed \"fun Friday colors\" to main. The app is orange and green. Gus pushed something good right after. Undo **only** Bjorn's commit, without rewriting history.",
+      "branch": "revert/friday-theme",
+      "steps": [
+        "Start fresh: `git switch main` then `git pull`. (Yes, the app looks like that now.)",
+        "Find the bad commit: `git log --oneline -- src/styles/tokens.css`",
+        "Branch: `git switch -c revert/friday-theme`",
+        "Undo it safely: `git revert <hash>`. Save the pre-written message and close the editor.",
+        "Check the colors are back in the app, run `npm run check`, then `git push -u origin revert/friday-theme`",
+        "Open a pull request and merge it. `git switch main`, `git pull`.",
+        "Switch back to Claude Code (your coach) and type **done**.",
+        "Do **not** use `git reset --hard` or `git push --force` on main. Gus will know."
+      ],
+      "acceptance": [
+        "`tokens.css` on `main` matches how it was before Bjorn's commit",
+        "Gus's later commit is still on `main`",
+        "You used `git revert` (history adds an undo; nothing is erased)",
+        "It reached `main` through a pull request"
+      ],
+      "xp": 100
+    },
+    {
+      "id": "STU-9",
+      "title": "Ship the Kudos page",
+      "from": "priya",
+      "summary": "Your final ticket, start to finish. A **Kudos** page: shout-outs from teammates to teammates. A data file, a page, a sidebar link. Tokens only. Small commits. One pull request. You've done every piece of this already.",
+      "branch": "feature/kudos-page",
+      "steps": [
+        "Start fresh: `git switch main`, `git pull`, `git switch -c feature/kudos-page`",
+        "Data: `src/content/kudos.ts` with at least 3 kudos (`from`, `to`, `message`). One for Bjorn. He's earned it. Commit.",
+        "Page: a `KudosView` that lists them with the existing `Card` and `CastAvatar`. Copy `PeopleView`'s pattern. Commit.",
+        "Navigation: a `kudos` view in `src/game/nav.tsx`, a case in `App.tsx`, and a link in `Sidebar.tsx` next to People. Commit.",
+        "Use AI where it helps. Read every line. `npm run check` before each commit.",
+        "Push, open a pull request, merge it. `git switch main`, `git pull`, `git branch -d feature/kudos-page`.",
+        "Switch back to Claude Code (your coach) and type **done**."
+      ],
+      "acceptance": [
+        "`src/content/kudos.ts` has at least 3 kudos",
+        "A page shows them, reachable from the sidebar",
+        "`npm run check` passes on `main`",
+        "At least 2 focused commits with good messages",
+        "It reached `main` through a pull request"
+      ],
+      "xp": 250
     }
   ],
   "beats": [
@@ -573,6 +771,2561 @@
           ]
         }
       ]
+    },
+    {
+      "id": "d1-100",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "Reviewed your branch. Not yet. Notes below. Fix them on the same branch, push again, and tell your coach \"done\".",
+      "time": "4:40 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-1",
+          "result": "redo"
+        }
+      }
+    },
+    {
+      "id": "d1-101",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "",
+      "time": "4:40 PM",
+      "coachNotes": {
+        "ticket": "STU-1",
+        "result": "redo"
+      }
+    },
+    {
+      "id": "d1-102",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "Reviewed your branch.\nBranch: yes. Main untouched: yes. Message: passes. One file, like I asked.\nSTU-1 is done. Your name tag will show up on main once that branch is merged. That's Day 3.",
+      "time": "4:40 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-1",
+          "result": "pass"
+        }
+      },
+      "reward": {
+        "xp": 50,
+        "rep": {
+          "gus": 2
+        },
+        "badge": "First Commit",
+        "day": 2
+      }
+    },
+    {
+      "id": "d1-103",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "",
+      "time": "4:40 PM",
+      "coachNotes": {
+        "ticket": "STU-1",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "d1-110",
+      "channel": "eng",
+      "from": "ci3po",
+      "phase": "review",
+      "text": "Build #4190 ✅ passed.\n📋 Ticket **STU-1** → done. I have deleted the failed build notification I drafted. I am not disappointed. I am a build bot.",
+      "time": "4:40 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-1",
+          "result": "pass"
+        }
+      },
+      "reward": {
+        "rep": {
+          "ci3po": 1
+        }
+      }
+    },
+    {
+      "id": "d1-104",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "Any questions before tomorrow?",
+      "time": "4:42 PM",
+      "choices": [
+        {
+          "id": "a",
+          "text": "How did you know my message was good before you opened the diff?",
+          "reward": {
+            "xp": 5,
+            "rep": {
+              "gus": 1
+            }
+          },
+          "replies": [
+            {
+              "from": "gus",
+              "text": "The subject line is the first thing I read. If it's vague, the diff usually is too. Yours wasn't."
+            }
+          ]
+        },
+        {
+          "id": "b",
+          "text": "Nope. Same time tomorrow?",
+          "replies": [
+            {
+              "from": "gus",
+              "text": "Same time tomorrow. Bring coffee. Not for me. For you."
+            }
+          ]
+        }
+      ],
+      "requires": {
+        "review": {
+          "ticket": "STU-1",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d1-111",
+      "channel": "eng",
+      "from": "bjorn",
+      "phase": "review",
+      "text": "first ticket on day one!! 🙌 took me a week. (it was 3 days but it felt like a week) (gus says it was a week)",
+      "time": "4:41 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-1",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d1-112",
+      "channel": "eng",
+      "from": "bjorn",
+      "phase": "review",
+      "text": "also thanks for the --force question earlier. i asked gus. he made me read a whole article 😅 i'm a changed intern 🫡",
+      "time": "4:43 PM",
+      "requires": {
+        "choice": "d1-040:a",
+        "review": {
+          "ticket": "STU-1",
+          "result": "pass"
+        }
+      },
+      "reward": {
+        "rep": {
+          "bjorn": 1
+        }
+      }
+    },
+    {
+      "id": "d1-120",
+      "channel": "design-system",
+      "from": "dot",
+      "phase": "review",
+      "text": "I checked your `favoriteToken`. A real token, spelled right. 💜 You'd be amazed how rare that is.",
+      "time": "4:45 PM",
+      "reward": {
+        "rep": {
+          "dot": 1
+        }
+      },
+      "requires": {
+        "review": {
+          "ticket": "STU-1",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d1-121",
+      "channel": "design-system",
+      "from": "dot",
+      "phase": "review",
+      "text": "And you asked **why** that button wasn't a token, instead of just fixing it. Keep doing that. That's how a system grows. 💜",
+      "time": "4:46 PM",
+      "requires": {
+        "choice": "d1-021:c",
+        "review": {
+          "ticket": "STU-1",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d1-130",
+      "channel": "general",
+      "from": "priya",
+      "phase": "review",
+      "text": "first ticket shipped on day one!!! 🎉 (Gus says \"shipped\" means merged) (we'll get there) (soon!!)",
+      "time": "4:50 PM",
+      "reward": {
+        "rep": {
+          "priya": 1
+        }
+      },
+      "requires": {
+        "review": {
+          "ticket": "STU-1",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d2-001",
+      "channel": "general",
+      "from": "ci3po",
+      "phase": "intro",
+      "text": "🤖 Good morning. Day 2. Build status: **red**. I would like to say I am surprised.",
+      "time": "9:00 AM"
+    },
+    {
+      "id": "d2-002",
+      "channel": "general",
+      "from": "priya",
+      "phase": "intro",
+      "text": "morning!! 🌞 quick question 🙏 has anyone else noticed the buttons look... slightly different? (not worse!) (different)",
+      "time": "9:03 AM",
+      "choices": [
+        {
+          "id": "a",
+          "text": "They do look a bit off. Want me to dig in?",
+          "reward": {
+            "xp": 5,
+            "rep": {
+              "priya": 1
+            }
+          },
+          "replies": [
+            {
+              "from": "priya",
+              "text": "yes please!!! you're the best 🙏 (Dotty is already on it, I think) (she's always already on it)"
+            }
+          ]
+        },
+        {
+          "id": "b",
+          "text": "Looks the same to me?",
+          "replies": [
+            {
+              "from": "dot",
+              "text": "It is not the same. It is basically the same. Those are different things. 💜"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d2-010",
+      "channel": "eng",
+      "from": "ci3po",
+      "phase": "intro",
+      "text": "Build #4191 ❌ failed.\nStep: `npm run dot`\nFinding: `src/components/ui/button.tsx` hard-codes `#6B5CE7`.\nAuthor: I have opinions, but I will let the commit history speak.",
+      "time": "9:05 AM"
+    },
+    {
+      "id": "d2-011",
+      "channel": "eng",
+      "from": "bjorn",
+      "phase": "intro",
+      "text": "not me!! (probably not me) (checking)",
+      "time": "9:06 AM"
+    },
+    {
+      "id": "d2-012",
+      "channel": "eng",
+      "from": "gus",
+      "phase": "intro",
+      "text": "Don't guess. Read the history. Today's lesson is how.",
+      "time": "9:08 AM",
+      "lesson": "day2"
+    },
+    {
+      "id": "d2-020",
+      "channel": "design-system",
+      "from": "dot",
+      "phase": "intro",
+      "text": "🚨 A hex code has entered the Button. I repeat. A hex code has entered the Button. 💜",
+      "time": "9:04 AM"
+    },
+    {
+      "id": "d2-021",
+      "channel": "design-system",
+      "from": "dot",
+      "phase": "intro",
+      "text": "I don't want blame. I want to know **which commit**, so we can see what else it touched. History is a design artifact. Treat it like one.",
+      "time": "9:06 AM",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Like scrubbing version history to see when a frame changed?",
+          "reward": {
+            "xp": 5,
+            "rep": {
+              "dot": 2
+            }
+          },
+          "replies": [
+            {
+              "from": "dot",
+              "text": "Exactly like that. 💜 `git log` is the version panel. `git blame` is \"who touched this layer last.\""
+            }
+          ]
+        },
+        {
+          "id": "b",
+          "text": "Can't we just fix the color and move on?",
+          "replies": [
+            {
+              "from": "dot",
+              "text": "We can. But if we don't know how it got in, it gets in again. Find the commit first. Then fix. 💜"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d2-050",
+      "channel": "dm-dot",
+      "from": "dot",
+      "phase": "intro",
+      "text": "Hi! I'm assigning you today's ticket, once Gus lets you out of Studio Academy. 💜 It's a detective story. My favorite genre.",
+      "time": "9:10 AM"
+    },
+    {
+      "id": "d2-051",
+      "channel": "dm-dot",
+      "from": "dot",
+      "phase": "ticket",
+      "text": "You passed the lesson! Okay. Here's the case file. 🔍",
+      "ticket": "STU-2"
+    },
+    {
+      "id": "d2-060",
+      "channel": "dm-bjorn",
+      "from": "bjorn",
+      "phase": "intro",
+      "text": "hey so. hypothetically. if someone made the buttons pop more yesterday. and it turned out pop = hex code. how mad would dotty be (asking for a friend) (the friend is me)",
+      "time": "9:12 AM",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Mad-ish. But she'll be happier if you tell her than if git does.",
+          "reward": {
+            "xp": 10,
+            "rep": {
+              "bjorn": 1,
+              "dot": 1
+            }
+          },
+          "replies": [
+            {
+              "from": "bjorn",
+              "text": "ugh. you're right. going to #design-system. if i don't come back tell gus i was a good intern 🫡"
+            }
+          ]
+        },
+        {
+          "id": "b",
+          "text": "Maybe let me find the commit first and we'll see.",
+          "reward": {
+            "xp": 5
+          },
+          "replies": [
+            {
+              "from": "bjorn",
+              "text": "ok cool cool cool. take your time. (please take a long time) 😅"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d2-100",
+      "channel": "dm-dot",
+      "from": "dot",
+      "phase": "review",
+      "text": "I looked at your branch. Close! A few notes below. Same branch, push again, then \"done\". 💜",
+      "time": "4:40 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-2",
+          "result": "redo"
+        }
+      }
+    },
+    {
+      "id": "d2-101",
+      "channel": "dm-dot",
+      "from": "dot",
+      "phase": "review",
+      "text": "",
+      "time": "4:40 PM",
+      "coachNotes": {
+        "ticket": "STU-2",
+        "result": "redo"
+      }
+    },
+    {
+      "id": "d2-102",
+      "channel": "dm-dot",
+      "from": "dot",
+      "phase": "review",
+      "text": "Case closed. 🔍💜 You found the exact commit, named it in your message, and put the token back. Future us will thank you every time someone runs `git log` on that file.",
+      "time": "4:40 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-2",
+          "result": "pass"
+        }
+      },
+      "reward": {
+        "xp": 75,
+        "rep": {
+          "dot": 2,
+          "gus": 1
+        },
+        "badge": "History Buff",
+        "day": 3
+      }
+    },
+    {
+      "id": "d2-103",
+      "channel": "dm-dot",
+      "from": "dot",
+      "phase": "review",
+      "text": "",
+      "time": "4:40 PM",
+      "coachNotes": {
+        "ticket": "STU-2",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "d2-110",
+      "channel": "eng",
+      "from": "ci3po",
+      "phase": "review",
+      "text": "Build #4192 ✅ passed on your branch.\nNote: `main` is still red until your fix is merged. Merging is tomorrow. I will remain red until then. Quietly.",
+      "time": "4:40 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-2",
+          "result": "pass"
+        }
+      },
+      "reward": {
+        "rep": {
+          "ci3po": 1
+        }
+      }
+    },
+    {
+      "id": "d2-104",
+      "channel": "dm-dot",
+      "from": "dot",
+      "phase": "review",
+      "text": "Can I tell you a secret? Gus reads commit bodies. All of them. Yours made him nod. I saw it. 💜",
+      "time": "4:42 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-2",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d2-111",
+      "channel": "eng",
+      "from": "bjorn",
+      "phase": "review",
+      "text": "ok it WAS me. \"Make buttons pop more\" 😅 i owned up in #design-system before git did. dotty gave me a token sticker. i think that's good?",
+      "time": "4:44 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-2",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d2-112",
+      "channel": "eng",
+      "from": "gus",
+      "phase": "review",
+      "text": "It's good. The sticker is a warning.",
+      "time": "4:45 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-2",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d2-130",
+      "channel": "general",
+      "from": "priya",
+      "phase": "review",
+      "text": "reminder!! tomorrow is PR day 🎉 your work goes from \"on a branch\" to \"on main\" (Gus is reviewing) (bring snacks)",
+      "time": "4:50 PM",
+      "reward": {
+        "rep": {
+          "priya": 1
+        }
+      },
+      "requires": {
+        "review": {
+          "ticket": "STU-2",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d3-001",
+      "channel": "general",
+      "from": "ci3po",
+      "phase": "intro",
+      "text": "🤖 Good morning. Day 3. Build status: **still red**. A fix exists on a branch. A branch is not main. I am counting the minutes.",
+      "time": "9:00 AM"
+    },
+    {
+      "id": "d3-002",
+      "channel": "general",
+      "from": "priya",
+      "phase": "intro",
+      "text": "PR DAY 🎉🎉 also i added **pronouns** to the team directory this morning!! (it's on main) (everyone go check the People page) (Bjorn yours says he/him, I checked)",
+      "time": "9:02 AM"
+    },
+    {
+      "id": "d3-003",
+      "channel": "general",
+      "from": "bjorn",
+      "phase": "intro",
+      "text": "it does!! 🙌",
+      "time": "9:03 AM"
+    },
+    {
+      "id": "d3-010",
+      "channel": "eng",
+      "from": "gus",
+      "phase": "intro",
+      "text": "Today: pull requests. A branch is a draft. A pull request is \"please review this and put it on main.\" It's how everything gets to main here. Including mine.",
+      "time": "9:05 AM",
+      "lesson": "day3"
+    },
+    {
+      "id": "d3-011",
+      "channel": "eng",
+      "from": "gus",
+      "phase": "intro",
+      "text": "Question for the new hire. Why not just merge your branch yourself on your laptop and push main?",
+      "time": "9:06 AM",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Because then nobody reviews it before it's live.",
+          "reward": {
+            "xp": 10,
+            "rep": {
+              "gus": 2
+            }
+          },
+          "replies": [
+            {
+              "from": "gus",
+              "text": "Correct. The pull request is where the second pair of eyes lives."
+            }
+          ]
+        },
+        {
+          "id": "b",
+          "text": "Because Bjorn does that?",
+          "reward": {
+            "xp": 5,
+            "rep": {
+              "bjorn": -1,
+              "gus": 1
+            }
+          },
+          "replies": [
+            {
+              "from": "gus",
+              "text": "Also correct."
+            },
+            {
+              "from": "bjorn",
+              "text": "hey!! (fair)"
+            }
+          ]
+        },
+        {
+          "id": "c",
+          "text": "Honestly that sounds faster.",
+          "replies": [
+            {
+              "from": "gus",
+              "text": "It is faster. So is driving without brakes."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d3-020",
+      "channel": "design-system",
+      "from": "dot",
+      "phase": "intro",
+      "text": "Pull requests are design crits for code. 💜 You present, people comment, you iterate, it ships. Same muscles.",
+      "time": "9:10 AM"
+    },
+    {
+      "id": "d3-050",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "intro",
+      "text": "Do the lesson. Then I'll give you the ticket. Then I'll review your pull request. Then you'll fix what I find. That's the job.",
+      "time": "9:07 AM"
+    },
+    {
+      "id": "d3-051",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "ticket",
+      "text": "Ticket. Two pull requests. The first one is free. The second one has my name on it.",
+      "ticket": "STU-3"
+    },
+    {
+      "id": "d3-052",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "ticket",
+      "text": "My review of your directory entry, so you don't have to wait:\n> **Requested changes.** Priya added a `pronouns` field this morning. Your entry should have it. Your branch is older than her change, so first bring main into your branch: `git merge main`. Then add it, commit, push. The pull request updates itself when you push. That's the trick.",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Why merge main in first? Can't I just add the field?",
+          "reward": {
+            "xp": 10,
+            "rep": {
+              "gus": 1
+            }
+          },
+          "replies": [
+            {
+              "from": "gus",
+              "text": "Your branch doesn't know the field exists yet. TypeScript will say so. Bring main in, then it does. Like updating a library before using its new component."
+            }
+          ]
+        },
+        {
+          "id": "b",
+          "text": "On it.",
+          "reward": {
+            "xp": 5
+          },
+          "replies": [
+            {
+              "from": "gus",
+              "text": "Good."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d3-060",
+      "channel": "dm-priya",
+      "from": "priya",
+      "phase": "intro",
+      "text": "hiii 🙏 quick question (actually quick this time!!) once your entry is merged, can you check the People page shows your pronouns? i want to screenshot it for the all-hands (no pressure) (some pressure) (it's for the slide)",
+      "time": "9:20 AM",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Will do, right after it merges!",
+          "reward": {
+            "xp": 5,
+            "rep": {
+              "priya": 2
+            }
+          },
+          "replies": [
+            {
+              "from": "priya",
+              "text": "YOU'RE THE BEST 🎉"
+            }
+          ]
+        },
+        {
+          "id": "b",
+          "text": "Sure, but it depends on Gus's review.",
+          "reward": {
+            "xp": 5,
+            "rep": {
+              "priya": 1,
+              "gus": 1
+            }
+          },
+          "replies": [
+            {
+              "from": "priya",
+              "text": "oh totally!! review first. (Gus, be nice) (Gus is always nice) (Gus is fair)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d3-100",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "Checked main. Something's missing. Notes below.",
+      "time": "4:40 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-3",
+          "result": "redo"
+        }
+      }
+    },
+    {
+      "id": "d3-101",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "",
+      "time": "4:40 PM",
+      "coachNotes": {
+        "ticket": "STU-3",
+        "result": "redo"
+      }
+    },
+    {
+      "id": "d3-102",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "Checked main. Both pull requests merged. Pronouns are there. You merged main into your branch before adding them, which is why it went in clean.\nYour name is on main now. Permanently. No pressure.",
+      "time": "4:40 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-3",
+          "result": "pass"
+        }
+      },
+      "reward": {
+        "xp": 75,
+        "rep": {
+          "gus": 2,
+          "priya": 1
+        },
+        "badge": "Pull Request Pro",
+        "day": 4
+      }
+    },
+    {
+      "id": "d3-103",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "",
+      "time": "4:40 PM",
+      "coachNotes": {
+        "ticket": "STU-3",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "d3-110",
+      "channel": "eng",
+      "from": "ci3po",
+      "phase": "review",
+      "text": "Build #4193 ✅ passed on **main**.\nI am green. I would like everyone to notice that I am green.",
+      "time": "4:40 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-3",
+          "result": "pass"
+        }
+      },
+      "reward": {
+        "rep": {
+          "ci3po": 1
+        }
+      }
+    },
+    {
+      "id": "d3-111",
+      "channel": "eng",
+      "from": "bjorn",
+      "phase": "review",
+      "text": "wait you can push to the branch and the PR just... updates?? 🤯 i've been opening a new PR every time",
+      "time": "4:41 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-3",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d3-112",
+      "channel": "eng",
+      "from": "gus",
+      "phase": "review",
+      "text": "I know, Bjorn. I've closed all of them.",
+      "time": "4:42 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-3",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d3-130",
+      "channel": "general",
+      "from": "priya",
+      "phase": "review",
+      "text": "People page screenshot is IN the slide 📸🎉 thank you!!! also heads up: tomorrow i have a small copy ticket for you (small!) (it touches a file Bjorn is also in) (that's probably fine)",
+      "time": "4:50 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-3",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d3-131",
+      "channel": "general",
+      "from": "gus",
+      "phase": "review",
+      "text": "It is not probably fine.",
+      "time": "4:51 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-3",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d4-001",
+      "channel": "general",
+      "from": "ci3po",
+      "phase": "intro",
+      "text": "🤖 Good morning. Day 4. Build status: green. Merge conflicts expected today: one. I have scheduled it.",
+      "time": "9:00 AM"
+    },
+    {
+      "id": "d4-002",
+      "channel": "general",
+      "from": "priya",
+      "phase": "intro",
+      "text": "quick one 🙏 the People page should say **Team** with \"Who's who at The Studio\" underneath. it's ONE file (copy.ts) (Gus moved all the words there yesterday) (thank you Gus)",
+      "time": "9:02 AM"
+    },
+    {
+      "id": "d4-003",
+      "channel": "general",
+      "from": "bjorn",
+      "phase": "intro",
+      "text": "oh!! i also changed that file yesterday!! \"The Squad 🚀\" 🙌 it's on my branch. great minds 😅",
+      "time": "9:03 AM"
+    },
+    {
+      "id": "d4-004",
+      "channel": "general",
+      "from": "gus",
+      "phase": "intro",
+      "text": "Great minds, same lines. That's a conflict. New hire, this one's yours. Lesson first.",
+      "time": "9:04 AM",
+      "lesson": "day4"
+    },
+    {
+      "id": "d4-010",
+      "channel": "eng",
+      "from": "ci3po",
+      "phase": "intro",
+      "text": "Pre-emptive status: `bjorn/people-page-copy` and the upcoming `copy/people-page` modify identical lines of `src/content/copy.ts`. I have calculated the odds of a conflict. They are 100%.",
+      "time": "9:06 AM"
+    },
+    {
+      "id": "d4-011",
+      "channel": "eng",
+      "from": "bjorn",
+      "phase": "intro",
+      "text": "should i just force push mine over everything? 💪",
+      "time": "9:07 AM",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Please no. I'll merge yours into mine and resolve it.",
+          "reward": {
+            "xp": 10,
+            "rep": {
+              "gus": 1,
+              "bjorn": 1
+            }
+          },
+          "replies": [
+            {
+              "from": "bjorn",
+              "text": "ok ok!! team player 🫡"
+            },
+            {
+              "from": "gus",
+              "text": "Thank you."
+            }
+          ]
+        },
+        {
+          "id": "b",
+          "text": "What would happen if you did?",
+          "reward": {
+            "xp": 10,
+            "rep": {
+              "gus": 2
+            }
+          },
+          "replies": [
+            {
+              "from": "gus",
+              "text": "His version replaces history. Anyone else's work on that branch disappears. That's why we don't."
+            },
+            {
+              "from": "bjorn",
+              "text": "...oh. OH."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d4-020",
+      "channel": "design-system",
+      "from": "dot",
+      "phase": "intro",
+      "text": "A merge conflict is two designers editing the same text layer. 💜 Git doesn't pick a winner. It shows you both and lets you decide. That's actually very respectful of git.",
+      "time": "9:10 AM"
+    },
+    {
+      "id": "d4-050",
+      "channel": "dm-priya",
+      "from": "priya",
+      "phase": "intro",
+      "text": "hiii so i saw Bjorn's subtitle (\"Everyone who works here (and CI-3PO, who insists)\") and honestly?? i love it?? can we keep HIS subtitle and YOUR title?? (is that allowed) (is that a thing)",
+      "time": "9:12 AM",
+      "choices": [
+        {
+          "id": "a",
+          "text": "That's exactly a thing. I'll combine them when I resolve the conflict.",
+          "reward": {
+            "xp": 10,
+            "rep": {
+              "priya": 2
+            }
+          },
+          "replies": [
+            {
+              "from": "priya",
+              "text": "i love when things are a thing 🎉"
+            }
+          ]
+        },
+        {
+          "id": "b",
+          "text": "Can we just pick one? It's simpler.",
+          "reward": {
+            "rep": {
+              "priya": -1
+            }
+          },
+          "replies": [
+            {
+              "from": "priya",
+              "text": "oh! sure... (the slide though) (it's fine) (it's on the slide)"
+            },
+            {
+              "from": "gus",
+              "text": "Combine them. It's a two-line edit. Resolving is choosing, not just picking a side."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d4-051",
+      "channel": "dm-priya",
+      "from": "priya",
+      "phase": "ticket",
+      "text": "you passed the lesson!! 🎉 here's the ticket (Gus says it's a \"boss fight\") (he said it with a straight face)",
+      "ticket": "STU-4"
+    },
+    {
+      "id": "d4-060",
+      "channel": "dm-bjorn",
+      "from": "bjorn",
+      "phase": "intro",
+      "text": "sorry in advance about the conflict 🙏 i told you on day one it would probably be me 😅",
+      "time": "9:15 AM"
+    },
+    {
+      "id": "d4-100",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "Checked main. Not quite. Notes below.",
+      "time": "4:40 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-4",
+          "result": "redo"
+        }
+      }
+    },
+    {
+      "id": "d4-101",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "",
+      "time": "4:40 PM",
+      "coachNotes": {
+        "ticket": "STU-4",
+        "result": "redo"
+      }
+    },
+    {
+      "id": "d4-102",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "Checked main. Bjorn's branch is in. Your title, his subtitle. No markers. Merged through a pull request.\nThat was the boss. You didn't panic. That's the actual skill.",
+      "time": "4:40 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-4",
+          "result": "pass"
+        }
+      },
+      "reward": {
+        "xp": 100,
+        "rep": {
+          "gus": 2,
+          "bjorn": 1
+        },
+        "badge": "Conflict Resolver",
+        "day": 5
+      }
+    },
+    {
+      "id": "d4-103",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "",
+      "time": "4:40 PM",
+      "coachNotes": {
+        "ticket": "STU-4",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "d4-110",
+      "channel": "eng",
+      "from": "ci3po",
+      "phase": "review",
+      "text": "Build #4194 ✅ passed.\nMerge conflicts resolved today: 1. Merge conflicts that became incidents: 0. I have updated my forecast models.",
+      "time": "4:40 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-4",
+          "result": "pass"
+        }
+      },
+      "reward": {
+        "rep": {
+          "ci3po": 1
+        }
+      }
+    },
+    {
+      "id": "d4-111",
+      "channel": "eng",
+      "from": "bjorn",
+      "phase": "review",
+      "text": "my subtitle is on main!!! 🥹 our subtitle. OUR subtitle. 🙌",
+      "time": "4:41 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-4",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d4-130",
+      "channel": "general",
+      "from": "priya",
+      "phase": "review",
+      "text": "the People page says TEAM 🎉 and has the CI-3PO joke 🎉 slide updated 🎉 (this is the third version of the slide)",
+      "time": "4:50 PM",
+      "reward": {
+        "rep": {
+          "priya": 1
+        }
+      },
+      "requires": {
+        "review": {
+          "ticket": "STU-4",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d4-131",
+      "channel": "general",
+      "from": "ci3po",
+      "phase": "review",
+      "text": "I do insist.",
+      "time": "4:51 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-4",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d5-001",
+      "channel": "general",
+      "from": "ci3po",
+      "phase": "intro",
+      "text": "🤖 Good morning. Day 5. Build status: green. Typos on production: one. It is not my department, but I noticed.",
+      "time": "9:00 AM"
+    },
+    {
+      "id": "d5-002",
+      "channel": "general",
+      "from": "priya",
+      "phase": "intro",
+      "text": "URGENT (actually urgent this time) 🚨 the People page footer says \"every **quater**\" and the CEO is demoing the People page AT NOON",
+      "time": "9:01 AM"
+    },
+    {
+      "id": "d5-003",
+      "channel": "general",
+      "from": "bjorn",
+      "phase": "intro",
+      "text": "oh i fixed that!! it's on my branch!! (my branch also has a pink header i'm trying out) (and a big font) (it's not done)",
+      "time": "9:02 AM"
+    },
+    {
+      "id": "d5-004",
+      "channel": "general",
+      "from": "gus",
+      "phase": "intro",
+      "text": "So we need one commit from a branch we don't want. There's a tool for exactly that. Lesson.",
+      "time": "9:03 AM",
+      "lesson": "day5"
+    },
+    {
+      "id": "d5-010",
+      "channel": "eng",
+      "from": "gus",
+      "phase": "intro",
+      "text": "Today's three tools. **Stash**: park unfinished work. **Cherry-pick**: copy one commit from anywhere. **Rebase**: replay your commits on a newer base. You'll use the first two for real.",
+      "time": "9:05 AM"
+    },
+    {
+      "id": "d5-011",
+      "channel": "eng",
+      "from": "bjorn",
+      "phase": "intro",
+      "text": "could i just merge my whole branch? the pink header is like 80% done",
+      "time": "9:06 AM",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Let's ship just the fix. The header can merge when it's 100%.",
+          "reward": {
+            "xp": 10,
+            "rep": {
+              "gus": 1,
+              "priya": 1
+            }
+          },
+          "replies": [
+            {
+              "from": "bjorn",
+              "text": "fair!! 80% is not 100%. that's math. 🫡"
+            }
+          ]
+        },
+        {
+          "id": "b",
+          "text": "Pink header during the CEO demo? Bold.",
+          "reward": {
+            "xp": 5,
+            "rep": {
+              "bjorn": 1
+            }
+          },
+          "replies": [
+            {
+              "from": "bjorn",
+              "text": "BOLD IS MY BRAND 💪"
+            },
+            {
+              "from": "dot",
+              "text": "The pink is `#ff3cac`. It is not a token. It is not going to the demo. 💜"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d5-020",
+      "channel": "design-system",
+      "from": "dot",
+      "phase": "intro",
+      "text": "Cherry-picking is copying one layer out of a messy exploration file into the real one. 💜 You don't copy the whole page. Just the bit that's ready.",
+      "time": "9:08 AM"
+    },
+    {
+      "id": "d5-050",
+      "channel": "dm-priya",
+      "from": "priya",
+      "phase": "intro",
+      "text": "i know you're in the middle of something!! sorry!! (stash it?) (Gus taught me that word) (i don't know what it means) (please stash it)",
+      "time": "9:10 AM"
+    },
+    {
+      "id": "d5-051",
+      "channel": "dm-priya",
+      "from": "priya",
+      "phase": "ticket",
+      "text": "lesson done?? 🙏 here's the ticket. noon. NOON. (no pressure) (all the pressure)",
+      "ticket": "STU-5"
+    },
+    {
+      "id": "d5-060",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "intro",
+      "text": "When Priya says urgent, ask one question first.",
+      "time": "9:12 AM",
+      "choices": [
+        {
+          "id": "a",
+          "text": "\"What's the smallest change that fixes it?\"",
+          "reward": {
+            "xp": 10,
+            "rep": {
+              "gus": 2
+            }
+          },
+          "replies": [
+            {
+              "from": "gus",
+              "text": "That one. Every time."
+            }
+          ]
+        },
+        {
+          "id": "b",
+          "text": "\"How urgent?\"",
+          "reward": {
+            "xp": 5,
+            "rep": {
+              "gus": 1
+            }
+          },
+          "replies": [
+            {
+              "from": "gus",
+              "text": "She'll say \"very.\" She'll be right about half the time. Ask about the smallest change instead."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d5-100",
+      "channel": "dm-priya",
+      "from": "priya",
+      "phase": "review",
+      "text": "ok so i looked and something isn't quite there yet 🙏 notes below!! (you've got this) (noon is still a while)",
+      "time": "4:40 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-5",
+          "result": "redo"
+        }
+      }
+    },
+    {
+      "id": "d5-101",
+      "channel": "dm-priya",
+      "from": "priya",
+      "phase": "review",
+      "text": "",
+      "time": "4:40 PM",
+      "coachNotes": {
+        "ticket": "STU-5",
+        "result": "redo"
+      }
+    },
+    {
+      "id": "d5-102",
+      "channel": "dm-priya",
+      "from": "priya",
+      "phase": "review",
+      "text": "THE TYPO IS GONE 🎉🎉🎉 and the pink header is NOT on main 🎉 the CEO demo went great!! (she said \"nice footer\") (i'm framing it)",
+      "time": "4:40 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-5",
+          "result": "pass"
+        }
+      },
+      "reward": {
+        "xp": 100,
+        "rep": {
+          "priya": 2,
+          "gus": 1
+        },
+        "badge": "Rebase Wrangler",
+        "day": 6
+      }
+    },
+    {
+      "id": "d5-103",
+      "channel": "dm-priya",
+      "from": "priya",
+      "phase": "review",
+      "text": "",
+      "time": "4:40 PM",
+      "coachNotes": {
+        "ticket": "STU-5",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "d5-110",
+      "channel": "eng",
+      "from": "ci3po",
+      "phase": "review",
+      "text": "Build #4195 ✅ passed.\nHotfix deployed at 11:42 AM. Demo at 12:00 PM. Margin: 18 minutes. I did not sweat. I do not have pores.",
+      "time": "4:40 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-5",
+          "result": "pass"
+        }
+      },
+      "reward": {
+        "rep": {
+          "ci3po": 1
+        }
+      }
+    },
+    {
+      "id": "d5-104",
+      "channel": "dm-priya",
+      "from": "priya",
+      "phase": "review",
+      "text": "also you stashed!!! Gus told me!! i still don't know what it means but i'm proud of you 🙏",
+      "time": "4:42 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-5",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d5-111",
+      "channel": "eng",
+      "from": "bjorn",
+      "phase": "review",
+      "text": "my fix is on main but my branch isn't?? that's so cool. cherry-pick is my new favorite word 🍒",
+      "time": "4:44 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-5",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d5-112",
+      "channel": "eng",
+      "from": "gus",
+      "phase": "review",
+      "text": "Next week, rebase your branch on main so the fix isn't in there twice. I'll show you.",
+      "time": "4:45 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-5",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d5-130",
+      "channel": "general",
+      "from": "priya",
+      "phase": "review",
+      "text": "next week: Dotty and i have a COMPONENT ticket for you. you get to build with AI!! 🤖✨ (Dotty will be watching) (lovingly)",
+      "time": "4:50 PM",
+      "reward": {
+        "rep": {
+          "priya": 1
+        }
+      },
+      "requires": {
+        "review": {
+          "ticket": "STU-5",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d6-001",
+      "channel": "general",
+      "from": "ci3po",
+      "phase": "intro",
+      "text": "🤖 Good morning. Day 6. Today a human will build a component with the help of an AI. As an AI-adjacent entity, I am rooting for both of you.",
+      "time": "9:00 AM"
+    },
+    {
+      "id": "d6-002",
+      "channel": "general",
+      "from": "priya",
+      "phase": "intro",
+      "text": "i added **presence** to the team directory!! 🟢 available 🟡 busy ⚪ away. it's in the data but not on the page yet. (that's the ticket) (that's your ticket) 🎉",
+      "time": "9:02 AM"
+    },
+    {
+      "id": "d6-003",
+      "channel": "general",
+      "from": "gus",
+      "phase": "intro",
+      "text": "I'm \"busy.\" Accurate.",
+      "time": "9:03 AM"
+    },
+    {
+      "id": "d6-010",
+      "channel": "eng",
+      "from": "gus",
+      "phase": "intro",
+      "text": "AI writes a fast first draft. It also writes confident nonsense. Today you learn to tell which is which, and to make the first draft good on purpose.",
+      "time": "9:05 AM",
+      "lesson": "day6"
+    },
+    {
+      "id": "d6-020",
+      "channel": "design-system",
+      "from": "dot",
+      "phase": "intro",
+      "text": "Rules for AI in my system 💜\n1. It doesn't know our tokens unless you tell it.\n2. It **loves** hex codes. Tell it no.\n3. Show it an existing component to copy. `badge.tsx` is a good one.\n4. You run `npm run dot`. Not the AI. You.",
+      "time": "9:06 AM"
+    },
+    {
+      "id": "d6-021",
+      "channel": "design-system",
+      "from": "dot",
+      "phase": "intro",
+      "text": "Pop quiz. The AI gives you `bg-green-500` for \"available\". Do you ship it?",
+      "time": "9:07 AM",
+      "choices": [
+        {
+          "id": "a",
+          "text": "No. Use the success token. green-500 is a palette color, not ours.",
+          "reward": {
+            "xp": 10,
+            "rep": {
+              "dot": 2
+            }
+          },
+          "replies": [
+            {
+              "from": "dot",
+              "text": "💜💜💜 Correct. Palette colors are just hex codes wearing a costume."
+            }
+          ]
+        },
+        {
+          "id": "b",
+          "text": "It's Tailwind, so it's fine?",
+          "replies": [
+            {
+              "from": "dot",
+              "text": "It's Tailwind's green, not ours. If we ever retheme, it stays green forever. Use `bg-success`. 💜"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d6-050",
+      "channel": "dm-priya",
+      "from": "priya",
+      "phase": "ticket",
+      "text": "lesson done!! here's the ticket 🎉 (Dotty co-wrote it) (she added the bold parts)",
+      "ticket": "STU-6"
+    },
+    {
+      "id": "d6-060",
+      "channel": "dm-dot",
+      "from": "dot",
+      "phase": "intro",
+      "text": "One tip. When you prompt, say which **file** to create, which **component to copy**, which **tokens** to use, and which **rules** to follow. Four things. The AI does much better work when it knows the house style. So do people. 💜",
+      "time": "9:12 AM"
+    },
+    {
+      "id": "d6-070",
+      "channel": "dm-bjorn",
+      "from": "bjorn",
+      "phase": "intro",
+      "text": "i used AI to build a whole page once!! it was amazing. it was also 900 lines and gus deleted 850 of them 😅 small commits!!!",
+      "time": "9:15 AM"
+    },
+    {
+      "id": "d6-100",
+      "channel": "dm-dot",
+      "from": "dot",
+      "phase": "review",
+      "text": "I looked at main. Almost! Notes below. 💜",
+      "time": "4:40 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-6",
+          "result": "redo"
+        }
+      }
+    },
+    {
+      "id": "d6-101",
+      "channel": "dm-dot",
+      "from": "dot",
+      "phase": "review",
+      "text": "",
+      "time": "4:40 PM",
+      "coachNotes": {
+        "ticket": "STU-6",
+        "result": "redo"
+      }
+    },
+    {
+      "id": "d6-102",
+      "channel": "dm-dot",
+      "from": "dot",
+      "phase": "review",
+      "text": "I ran my audit on main. Then I ran it again, just to feel it. 💜 Zero hard-coded values. Variants like `badge.tsx`. Small commits. You didn't ship the AI's first draft. You shipped **yours**.",
+      "time": "4:40 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-6",
+          "result": "pass"
+        }
+      },
+      "reward": {
+        "xp": 100,
+        "rep": {
+          "dot": 3
+        },
+        "badge": "AI Whisperer",
+        "day": 7
+      }
+    },
+    {
+      "id": "d6-103",
+      "channel": "dm-dot",
+      "from": "dot",
+      "phase": "review",
+      "text": "",
+      "time": "4:40 PM",
+      "coachNotes": {
+        "ticket": "STU-6",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "d6-110",
+      "channel": "eng",
+      "from": "ci3po",
+      "phase": "review",
+      "text": "Build #4196 ✅ passed.\nComponents added: 1. Hex codes added: 0. I have forwarded this build to Dotty. She asked me to.",
+      "time": "4:40 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-6",
+          "result": "pass"
+        }
+      },
+      "reward": {
+        "rep": {
+          "ci3po": 1
+        }
+      }
+    },
+    {
+      "id": "d6-111",
+      "channel": "eng",
+      "from": "gus",
+      "phase": "review",
+      "text": "Read your commits. Component first, usage second. That's how I'd have done it.",
+      "time": "4:42 PM",
+      "reward": {
+        "rep": {
+          "gus": 1
+        }
+      },
+      "requires": {
+        "review": {
+          "ticket": "STU-6",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d6-112",
+      "channel": "eng",
+      "from": "bjorn",
+      "phase": "review",
+      "text": "can you teach me your prompt?? mine just says \"make it pop\" 🙏",
+      "time": "4:43 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-6",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d6-130",
+      "channel": "general",
+      "from": "priya",
+      "phase": "review",
+      "text": "the People page has little status pills now!!! 🟢🟡⚪ (I'm 🟡) (always 🟡)",
+      "time": "4:50 PM",
+      "reward": {
+        "rep": {
+          "priya": 1
+        }
+      },
+      "requires": {
+        "review": {
+          "ticket": "STU-6",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d7-001",
+      "channel": "general",
+      "from": "ci3po",
+      "phase": "intro",
+      "text": "🤖 Good morning. Day 7. A pull request has been opened by Bjorn, written by an AI, reviewed by no one. Yet.",
+      "time": "9:00 AM"
+    },
+    {
+      "id": "d7-002",
+      "channel": "general",
+      "from": "bjorn",
+      "phase": "intro",
+      "text": "I MADE UNREAD BADGES!!! 🔴 with AI!!! it took 4 minutes!!! they're on `ai/unread-badge` 🙌🙌",
+      "time": "9:01 AM"
+    },
+    {
+      "id": "d7-003",
+      "channel": "general",
+      "from": "gus",
+      "phase": "intro",
+      "text": "Four minutes to write. Let's see how long to review.",
+      "time": "9:02 AM"
+    },
+    {
+      "id": "d7-010",
+      "channel": "eng",
+      "from": "gus",
+      "phase": "intro",
+      "text": "Today you review code you didn't write. AI code is the hardest kind: it looks finished. Lesson first. Then Bjorn's branch.",
+      "time": "9:04 AM",
+      "lesson": "day7"
+    },
+    {
+      "id": "d7-011",
+      "channel": "eng",
+      "from": "ci3po",
+      "phase": "intro",
+      "text": "Automated review of `ai/unread-badge`:\n❌ `npm run dot`: 3 findings.\nℹ️ My checks do not cover accessibility, empty states, or whether a component already exists. Those require a person. I have been told I am not a person.",
+      "time": "9:06 AM"
+    },
+    {
+      "id": "d7-020",
+      "channel": "design-system",
+      "from": "dot",
+      "phase": "intro",
+      "text": "I glanced at Bjorn's badge and had to sit down. 💜 Remember: my audit catches hex codes. It doesn't catch \"is this a button\" or \"what does a screen reader say.\" That's you.",
+      "time": "9:08 AM",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Like how a contrast checker can't tell you if the layout makes sense.",
+          "reward": {
+            "xp": 10,
+            "rep": {
+              "dot": 2
+            }
+          },
+          "replies": [
+            {
+              "from": "dot",
+              "text": "Exactly. Tools check rules. People check meaning. 💜"
+            }
+          ]
+        },
+        {
+          "id": "b",
+          "text": "Should we add more rules to the audit?",
+          "reward": {
+            "xp": 5,
+            "rep": {
+              "dot": 1,
+              "gus": 1
+            }
+          },
+          "replies": [
+            {
+              "from": "dot",
+              "text": "Some! I'll add `text-white` this week. But some things only a reviewer catches. 💜"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d7-050",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "intro",
+      "text": "Review it like it was a teammate's. Because it is. Bjorn opened it. Bjorn's name is on it.",
+      "time": "9:10 AM"
+    },
+    {
+      "id": "d7-051",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "ticket",
+      "text": "Ticket. Be thorough. Be kind in the comments. Bjorn reads them twice.",
+      "ticket": "STU-7"
+    },
+    {
+      "id": "d7-060",
+      "channel": "dm-bjorn",
+      "from": "bjorn",
+      "phase": "intro",
+      "text": "be honest. how bad is it 😅",
+      "time": "9:12 AM",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Not bad! A few fixes. I'll walk you through them.",
+          "reward": {
+            "xp": 10,
+            "rep": {
+              "bjorn": 2
+            }
+          },
+          "replies": [
+            {
+              "from": "bjorn",
+              "text": "ok that's the nicest way anyone has ever said \"a few fixes\" 🥹"
+            }
+          ]
+        },
+        {
+          "id": "b",
+          "text": "Seven problems. But they're all fixable.",
+          "reward": {
+            "xp": 5,
+            "rep": {
+              "bjorn": 1,
+              "gus": 1
+            }
+          },
+          "replies": [
+            {
+              "from": "bjorn",
+              "text": "SEVEN?? ok. ok. fixable. i like fixable. 🫡"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d7-100",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "Checked main. Some of the seven are still there. Notes below.",
+      "time": "4:40 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-7",
+          "result": "redo"
+        }
+      }
+    },
+    {
+      "id": "d7-101",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "",
+      "time": "4:40 PM",
+      "coachNotes": {
+        "ticket": "STU-7",
+        "result": "redo"
+      }
+    },
+    {
+      "id": "d7-102",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "Checked main. Tokens. A real button, or no button. A label a screen reader can use. Nothing when there's nothing.\nYou caught the ones the tools can't. That's what reviewers are for.",
+      "time": "4:40 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-7",
+          "result": "pass"
+        }
+      },
+      "reward": {
+        "xp": 100,
+        "rep": {
+          "gus": 2,
+          "bjorn": 1
+        },
+        "badge": "Reviewer",
+        "day": 8
+      }
+    },
+    {
+      "id": "d7-103",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "",
+      "time": "4:40 PM",
+      "coachNotes": {
+        "ticket": "STU-7",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "d7-110",
+      "channel": "eng",
+      "from": "ci3po",
+      "phase": "review",
+      "text": "Build #4197 ✅ passed.\nAccessibility issues detected by me: 0. Accessibility issues fixed by a human: 3. I am adjusting my self-image.",
+      "time": "4:40 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-7",
+          "result": "pass"
+        }
+      },
+      "reward": {
+        "rep": {
+          "ci3po": 1
+        }
+      }
+    },
+    {
+      "id": "d7-111",
+      "channel": "eng",
+      "from": "bjorn",
+      "phase": "review",
+      "text": "i read every comment. twice. the screen reader one blew my mind 🤯 i'm adding aria-labels to everything now (gus says not EVERYTHING) (just the right things)",
+      "time": "4:42 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-7",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d7-130",
+      "channel": "general",
+      "from": "priya",
+      "phase": "review",
+      "text": "happy almost-friday!! 🎉 tomorrow is deploy day (Bjorn has a fun surprise planned for the app!!) (he wouldn't say what) (that's fine) (that's probably fine)",
+      "time": "4:50 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-7",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d7-131",
+      "channel": "general",
+      "from": "gus",
+      "phase": "review",
+      "text": "It is never probably fine.",
+      "time": "4:51 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-7",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d8-001",
+      "channel": "general",
+      "from": "ci3po",
+      "phase": "intro",
+      "text": "🚨🚨🚨 ALERT 🚨🚨🚨\nThe app is **orange**.\nThe sidebar is **green**.\nThe background is **pink**.\nThis is not a drill. I wish it were a drill.",
+      "time": "4:55 PM"
+    },
+    {
+      "id": "d8-002",
+      "channel": "general",
+      "from": "bjorn",
+      "phase": "intro",
+      "text": "SURPRISE!!! 🎉 fun friday colors!!! do you love it",
+      "time": "4:55 PM"
+    },
+    {
+      "id": "d8-003",
+      "channel": "general",
+      "from": "priya",
+      "phase": "intro",
+      "text": "i... the client demo is in an hour 🙏 (i love YOU, Bjorn) (i don't love the orange)",
+      "time": "4:56 PM"
+    },
+    {
+      "id": "d8-004",
+      "channel": "general",
+      "from": "gus",
+      "phase": "intro",
+      "text": "Nobody touch main. New hire, you're on this. Lesson first. Five minutes. Then we fix it properly.",
+      "time": "4:57 PM",
+      "lesson": "day8"
+    },
+    {
+      "id": "d8-010",
+      "channel": "eng",
+      "from": "ci3po",
+      "phase": "intro",
+      "text": "Deploy log:\n`4:51 PM` Bjorn: \"Make the app more fun for Friday\"\n`4:53 PM` Gus: \"Add a deploy checklist to the README\"\n`4:55 PM` Me: screaming",
+      "time": "4:58 PM"
+    },
+    {
+      "id": "d8-011",
+      "channel": "eng",
+      "from": "bjorn",
+      "phase": "intro",
+      "text": "i can just reset main to before my commit and force push!! super fast!! 💪",
+      "time": "4:58 PM",
+      "choices": [
+        {
+          "id": "a",
+          "text": "That would erase Gus's commit too. Let's revert yours instead.",
+          "reward": {
+            "xp": 15,
+            "rep": {
+              "gus": 2,
+              "bjorn": 1
+            }
+          },
+          "replies": [
+            {
+              "from": "bjorn",
+              "text": "...oh. gus pushed after me. OH. ok revert. what's revert"
+            },
+            {
+              "from": "gus",
+              "text": "You're about to find out."
+            }
+          ]
+        },
+        {
+          "id": "b",
+          "text": "Do it, we're in a hurry!",
+          "reward": {
+            "rep": {
+              "gus": -3
+            }
+          },
+          "replies": [
+            {
+              "from": "gus",
+              "text": "Nobody force pushes main. Especially not at 4:58 on a Friday."
+            },
+            {
+              "from": "bjorn",
+              "text": "hands off keyboard 🫡"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d8-020",
+      "channel": "design-system",
+      "from": "dot",
+      "phase": "intro",
+      "text": "Our **tokens** did this. One file changed and the whole app changed with it. 💜 That's the power of a design system. It's also the danger. Please revert it before I see the orange again.",
+      "time": "4:59 PM"
+    },
+    {
+      "id": "d8-050",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "intro",
+      "text": "Revert, not reset. Revert adds a new commit that undoes one old commit. Everyone's history stays true. Reset rewrites history. On a shared branch, that's how you lose people's work.",
+      "time": "4:58 PM"
+    },
+    {
+      "id": "d8-051",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "ticket",
+      "text": "Ticket. Calm and correct beats fast and wrong.",
+      "ticket": "STU-8"
+    },
+    {
+      "id": "d8-060",
+      "channel": "dm-bjorn",
+      "from": "bjorn",
+      "phase": "intro",
+      "text": "i'm so sorry 😭 i thought it would be fun",
+      "time": "5:00 PM",
+      "choices": [
+        {
+          "id": "a",
+          "text": "It was a little fun. We'll fix it together.",
+          "reward": {
+            "xp": 10,
+            "rep": {
+              "bjorn": 2
+            }
+          },
+          "replies": [
+            {
+              "from": "bjorn",
+              "text": "🥹 ok. you're my favorite coworker. (don't tell gus) (gus can see this) (hi gus)"
+            }
+          ]
+        },
+        {
+          "id": "b",
+          "text": "Next time, a PR first?",
+          "reward": {
+            "xp": 10,
+            "rep": {
+              "bjorn": 1,
+              "gus": 1
+            }
+          },
+          "replies": [
+            {
+              "from": "bjorn",
+              "text": "PR first. writing it on my hand. 🖊️"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d8-100",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "Checked main. Not fixed yet. Notes below. Breathe.",
+      "time": "5:30 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-8",
+          "result": "redo"
+        }
+      }
+    },
+    {
+      "id": "d8-101",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "",
+      "time": "5:30 PM",
+      "coachNotes": {
+        "ticket": "STU-8",
+        "result": "redo"
+      }
+    },
+    {
+      "id": "d8-102",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "Checked main. Colors are back. My commit is still there. Bjorn's commit is still there too, with your revert right after it, so anyone reading history knows exactly what happened.\nCalm and correct. On a Friday. Good.",
+      "time": "5:30 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-8",
+          "result": "pass"
+        }
+      },
+      "reward": {
+        "xp": 100,
+        "rep": {
+          "gus": 3,
+          "priya": 1
+        },
+        "badge": "Incident Hero",
+        "day": 9
+      }
+    },
+    {
+      "id": "d8-103",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "",
+      "time": "5:30 PM",
+      "coachNotes": {
+        "ticket": "STU-8",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "d8-110",
+      "channel": "eng",
+      "from": "ci3po",
+      "phase": "review",
+      "text": "Build #4198 ✅ passed.\nIncident duration: resolved. Colors: correct. Me: recalibrating.\nPost-incident note: the revert is the receipt. Keep receipts.",
+      "time": "5:30 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-8",
+          "result": "pass"
+        }
+      },
+      "reward": {
+        "rep": {
+          "ci3po": 1
+        }
+      }
+    },
+    {
+      "id": "d8-111",
+      "channel": "eng",
+      "from": "bjorn",
+      "phase": "review",
+      "text": "the revert has MY commit name in it. \"Revert \"Make the app more fun for Friday\"\". it's like a little gravestone 🪦 i've learned so much",
+      "time": "5:31 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-8",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d8-130",
+      "channel": "general",
+      "from": "priya",
+      "phase": "review",
+      "text": "DEMO WENT GREAT 🎉 the client said \"love the purple\" 💜 (it's the primary token) (Dotty told me to say that)",
+      "time": "6:10 PM",
+      "reward": {
+        "rep": {
+          "priya": 1
+        }
+      },
+      "requires": {
+        "review": {
+          "ticket": "STU-8",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d8-131",
+      "channel": "general",
+      "from": "priya",
+      "phase": "review",
+      "text": "also. new hire. monday. you, me, Gus. we need to talk about your title 👀 (good talk!!) (GOOD talk)",
+      "time": "6:11 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-8",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d9-001",
+      "channel": "general",
+      "from": "ci3po",
+      "phase": "intro",
+      "text": "🤖 Good morning. Day 9. Build status: green. Team morale: high. I have checked twice. It is still high.",
+      "time": "9:00 AM"
+    },
+    {
+      "id": "d9-002",
+      "channel": "general",
+      "from": "priya",
+      "phase": "intro",
+      "text": "ok team 🎉 last ticket for our new hire before their review!!! it's a FEATURE. a whole one. (it's small) (it's a whole one though)",
+      "time": "9:01 AM"
+    },
+    {
+      "id": "d9-003",
+      "channel": "general",
+      "from": "bjorn",
+      "phase": "intro",
+      "text": "what is it what is it 👀",
+      "time": "9:01 AM"
+    },
+    {
+      "id": "d9-004",
+      "channel": "general",
+      "from": "priya",
+      "phase": "intro",
+      "text": "a **Kudos** page!! shout-outs for each other 💜 (Dotty's idea) (she said I could take credit) (I won't)",
+      "time": "9:02 AM"
+    },
+    {
+      "id": "d9-010",
+      "channel": "eng",
+      "from": "gus",
+      "phase": "intro",
+      "text": "Last lesson is a review of everything. Then the ticket is all of it at once: branch, small commits, pull request, merge. You know every step. I'm just going to watch.",
+      "time": "9:04 AM",
+      "lesson": "day9"
+    },
+    {
+      "id": "d9-011",
+      "channel": "eng",
+      "from": "gus",
+      "phase": "intro",
+      "text": "One question before you start. What's your first commit going to be?",
+      "time": "9:05 AM",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Just the data file. Smallest thing that works.",
+          "reward": {
+            "xp": 15,
+            "rep": {
+              "gus": 2
+            }
+          },
+          "replies": [
+            {
+              "from": "gus",
+              "text": "Good answer."
+            }
+          ]
+        },
+        {
+          "id": "b",
+          "text": "The whole page, then I'll clean it up.",
+          "reward": {
+            "xp": 5
+          },
+          "replies": [
+            {
+              "from": "gus",
+              "text": "Try smaller. Data first. Then the page. Then the link. Three commits I can read beat one I have to decode."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d9-020",
+      "channel": "design-system",
+      "from": "dot",
+      "phase": "intro",
+      "text": "For the Kudos page: use `Card`, `CastAvatar`, and the cast colors. You don't need a single new token. If you find yourself typing a `#`, close your laptop and go for a walk. 💜",
+      "time": "9:06 AM"
+    },
+    {
+      "id": "d9-050",
+      "channel": "dm-priya",
+      "from": "priya",
+      "phase": "ticket",
+      "text": "here it is!!! your last ticket 🥹 (not your last ticket ever) (your last ONBOARDING ticket) (there will be so many tickets)",
+      "ticket": "STU-9"
+    },
+    {
+      "id": "d9-060",
+      "channel": "dm-bjorn",
+      "from": "bjorn",
+      "phase": "intro",
+      "text": "if you need kudos ideas: \"Bjorn learned what revert means\" 🙏 (true!!) (very recent)",
+      "time": "9:10 AM"
+    },
+    {
+      "id": "d9-070",
+      "channel": "dm-dot",
+      "from": "dot",
+      "phase": "intro",
+      "text": "I've watched your commits all week. 💜 You went from \"what's a token\" to auditing an AI. Whatever happens on Monday, I'm putting you on my watch list. The good one.",
+      "time": "9:12 AM"
+    },
+    {
+      "id": "d9-100",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "Checked main. Close. Notes below. You know how to finish this.",
+      "time": "4:40 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-9",
+          "result": "redo"
+        }
+      }
+    },
+    {
+      "id": "d9-101",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "",
+      "time": "4:40 PM",
+      "coachNotes": {
+        "ticket": "STU-9",
+        "result": "redo"
+      }
+    },
+    {
+      "id": "d9-102",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "Checked main. Data, page, link. Small commits. Every message passes. One pull request, merged clean.\n\nLGTM.",
+      "time": "4:40 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-9",
+          "result": "pass"
+        }
+      },
+      "reward": {
+        "xp": 300,
+        "rep": {
+          "gus": 3,
+          "dot": 2,
+          "priya": 2,
+          "bjorn": 2
+        },
+        "badge": "Design Engineer"
+      }
+    },
+    {
+      "id": "d9-103",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "",
+      "time": "4:40 PM",
+      "coachNotes": {
+        "ticket": "STU-9",
+        "result": "pass"
+      }
+    },
+    {
+      "id": "d9-110",
+      "channel": "eng",
+      "from": "ci3po",
+      "phase": "review",
+      "text": "Build #4199 ✅ passed.\nFeature shipped by: you.\nRequired assistance from me: none.\nI have printed this build log. I do not have a printer. I found one.",
+      "time": "4:40 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-9",
+          "result": "pass"
+        }
+      },
+      "reward": {
+        "rep": {
+          "ci3po": 1
+        }
+      }
+    },
+    {
+      "id": "d9-104",
+      "channel": "dm-gus",
+      "from": "gus",
+      "phase": "review",
+      "text": "In case that wasn't clear. That's the fifth LGTM in eleven years. I'll need a bigger frame.",
+      "time": "4:42 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-9",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d9-111",
+      "channel": "eng",
+      "from": "bjorn",
+      "phase": "review",
+      "text": "GUS SAID LGTM 😭😭😭 i've been here 8 months and he's never said it to ME",
+      "time": "4:43 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-9",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d9-112",
+      "channel": "eng",
+      "from": "gus",
+      "phase": "review",
+      "text": "Bjorn, your kudos is on the page. Go read it.",
+      "time": "4:44 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-9",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d9-113",
+      "channel": "eng",
+      "from": "bjorn",
+      "phase": "review",
+      "text": "...🥹",
+      "time": "4:45 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-9",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d9-120",
+      "channel": "design-system",
+      "from": "dot",
+      "phase": "review",
+      "text": "Kudos page: zero new tokens, zero hex codes, every color from the system. 💜 I'm adding it to the design system docs as an example. Of what good looks like.",
+      "time": "4:46 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-9",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d9-130",
+      "channel": "general",
+      "from": "priya",
+      "phase": "review",
+      "text": "EVERYONE 🎉🎉🎉 please congratulate our newest **Design Engineer** 🎉🎉🎉\nnine days ago they didn't know what a branch was. today they shipped a feature, survived Bjorn's merge conflict, fixed a Friday outage, AND got an LGTM from Gus. (Gus!!) (an LGTM!!)",
+      "time": "5:00 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-9",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d9-131",
+      "channel": "general",
+      "from": "bjorn",
+      "phase": "review",
+      "text": "DESIGN ENGINEER 🙌🙌🙌 (can i be one) (gus says \"keep going\") (that's a yes?)",
+      "time": "5:01 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-9",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d9-132",
+      "channel": "general",
+      "from": "ci3po",
+      "phase": "review",
+      "text": "Congratulations. I have generated a certificate. It is in the build artifacts. It is the only artifact I am proud of.",
+      "time": "5:02 PM",
+      "requires": {
+        "review": {
+          "ticket": "STU-9",
+          "result": "pass"
+        }
+      }
+    },
+    {
+      "id": "d9-133",
+      "channel": "general",
+      "from": "priya",
+      "phase": "review",
+      "text": "you did it!! 🙏💜 thank you for playing The Studio. (keep the cheat sheet) (it's yours now) (all of it)",
+      "time": "5:03 PM",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Thank you, everyone. Same time Monday?",
+          "replies": [
+            {
+              "from": "gus",
+              "text": "Same time Monday. Bring coffee."
+            }
+          ]
+        },
+        {
+          "id": "b",
+          "text": "Where's my first real ticket?",
+          "replies": [
+            {
+              "from": "priya",
+              "text": "oh you KNOW i have one 🙏 (it's quick) (it's never quick)"
+            }
+          ]
+        }
+      ],
+      "requires": {
+        "review": {
+          "ticket": "STU-9",
+          "result": "pass"
+        }
+      }
     }
   ]
 }
