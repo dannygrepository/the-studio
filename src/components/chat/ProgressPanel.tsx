@@ -1,4 +1,4 @@
-import { Award, RotateCcw, Star } from 'lucide-react'
+import { Award, RotateCcw, Star, Users } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -19,7 +19,7 @@ const MOOD_VARIANT = {
 } as const
 
 function Meter({ pct, className }: { pct: number; className?: string }) {
-  // Ten token-colored segments: no inline widths, so Dot stays calm.
+  // Ten token-colored segments: no inline widths, so Dotty stays calm.
   const filled = Math.round(pct / 10)
   return (
     <div className="flex gap-0.5">
@@ -34,7 +34,7 @@ function Meter({ pct, className }: { pct: number; className?: string }) {
 }
 
 export function ProgressPanel() {
-  const { story, progress, resetGame } = useGame()
+  const { story, progress, resetGame, setOnboarded } = useGame()
   const level = levelFor(progress.xp)
   const today = story.days.find((d) => d.day === progress.day)
   const ticket = today && story.tickets.find((t) => t.id === today.ticket)
@@ -118,6 +118,15 @@ export function ProgressPanel() {
         variant="ghost"
         size="sm"
         className="self-start text-muted-foreground"
+        onClick={() => setOnboarded(false)}
+      >
+        <Users /> Replay intro
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="sm"
+        className="-mt-3 self-start text-muted-foreground"
         onClick={() => {
           if (window.confirm('Reset all progress and choices? This cannot be undone.')) resetGame()
         }}

@@ -7,6 +7,7 @@ How the coach runs The Studio. Read this at the start of every session.
 - The player types every git command. The coach runs git **for** the player only when they say **"hint"** or **"help me"**. A hint is the next step, not the whole solution.
 - Each day should take under 20 minutes: about 8 for the lesson, 10 for the ticket.
 - Adapt difficulty: if the player breezes through, add an optional stretch goal in the review beats; if they struggle, make the next lesson's practice terminal more guided.
+- When a day introduces a new git command or option, add it to `src/content/gitDictionary.ts` so hover definitions and the Git dictionary cover it.
 - Explain the concept behind each mission in 2–3 sentences with a design analogy.
 - End each day with a recap message and a new entry in `CHEATSHEET.md`.
 
@@ -48,7 +49,7 @@ A beat can carry:
 | 3 | Pull requests and review | STU-3: Open a PR from the Day 1 or 2 branch; Gus leaves review comments to address | Real PR review comments. |
 | 4 | Merge conflicts (boss fight) | STU-4: Merge a branch that Bjorn's real commits conflict with | Coach creates `bjorn/*` branches touching the same lines. |
 | 5 | stash, rebase vs merge, cherry-pick | STU-5: Priya needs one fix shipped from a half-done branch | Deadline pressure. |
-| 6 | AI-assisted component, tokens only | STU-6: Build a new component with AI; Dot audits with `npm run dot` | |
+| 6 | AI-assisted component, tokens only | STU-6: Build a new component with AI; Dotty audits with `npm run dot` | |
 | 7 | Reviewing AI code | STU-7: Review an AI-generated PR for token and a11y issues | Coach opens the flawed PR. |
 | 8 | Revert a bad deploy | STU-8: Friday outage, `git revert` | CI-3PO at peak drama. |
 | Finale | Ticket to merged PR | Ship a full feature | Promotion to Design Engineer. |

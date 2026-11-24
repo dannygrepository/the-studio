@@ -113,6 +113,8 @@ export interface Progress {
   applied: string[]
   /** Beats you've seen, for unread counts. */
   seen: string[]
+  /** Finished the welcome walkthrough. */
+  onboarded: boolean
 }
 
 export interface ChoiceRecord {

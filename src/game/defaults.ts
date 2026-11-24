@@ -9,6 +9,7 @@ export const DEFAULT_PROGRESS: Progress = {
   tickets: {},
   applied: [],
   seen: [],
+  onboarded: false,
 }
 
 export const DEFAULT_CHOICES: Choices = { choices: [] }

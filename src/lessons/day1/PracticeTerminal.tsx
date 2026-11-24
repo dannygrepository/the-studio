@@ -4,6 +4,7 @@ import { CircleCheck, Circle, Lightbulb, RotateCcw } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { GitCommand } from '@/components/git/GitCommand'
 import { cn } from '@/lib/utils'
 import { GOALS, INITIAL, REMOTE_URL, run, type Line, type SimState } from './gitSim'
 
@@ -139,7 +140,7 @@ export function PracticeTerminal({ onComplete, complete }: { onComplete: () => v
                 <Lightbulb /> Hint
               </Button>
               {hints > 0 && (
-                <code className="rounded-md bg-muted p-2 font-mono text-xs break-all">{nextGoal.hint}</code>
+                <GitCommand command={nextGoal.hint} className="block rounded-md p-2 text-xs leading-relaxed" />
               )}
             </div>
           )}

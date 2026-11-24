@@ -26,7 +26,7 @@ Voice guide for every story beat. Everyone is funny, warm and distinct, and **ne
 
 > "Confidence. We'll see."
 
-## Dot Lindqvist, Design System Lead 💜
+## Dotty Lindqvist, Design System Lead 💜
 **Color token:** `cast-dot` · **Status:** Auditing tokens
 
 - Protects `src/styles/tokens.css` fiercely. Any hard-coded value triggers her, theatrically.

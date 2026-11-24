@@ -15,7 +15,7 @@
  *     favoriteToken: 'primary',
  *   }
  *
- * favoriteToken must be a real token name. Dot checks. (So does TypeScript.)
+ * favoriteToken must be a real token name. Dotty checks. (So does TypeScript.)
  */
 
 import type { TokenName } from './tokens'
@@ -44,7 +44,7 @@ export const team: (TeamMember & { id: string })[] = [
   },
   {
     id: 'dot',
-    name: 'Dot Lindqvist',
+    name: 'Dotty Lindqvist',
     title: 'Design System Lead',
     funFact: 'Can identify an off-token gray from across the room.',
     favoriteToken: 'cast-dot',
@@ -66,4 +66,9 @@ export const team: (TeamMember & { id: string })[] = [
 ]
 
 // 👇 Your entry goes here.
-export const newHire: TeamMember | null = null
+export const newHire: TeamMember | null = {
+      name: 'Designer Dan',
+      title: 'Product Designer',
+      funFact: 'Loves the smell of fresh baked bread',
+      favoriteToken: 'primary',
+    }

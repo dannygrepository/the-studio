@@ -35,6 +35,8 @@ Say **"hint"** or **"help me"** to your coach if you're stuck.
 | `src/components/ui/` | shadcn/ui components: Button, Card, Avatar, Badge. Tokens only. |
 | `src/components/chat/` | The chat app, built from those components. |
 | `src/lessons/` | Studio Academy lessons, one folder per day. |
+| `src/content/onboarding.ts` | Copy for the first-launch welcome (who's who, how a day works). Replay it from the right panel. |
+| `src/content/gitDictionary.ts` | Plain-language meaning of every git word. Powers hover definitions on commands and the Git dictionary page. |
 | `src/content/team.ts` | The team directory. Your Day 1 ticket lives here. |
 | `game/story.json` | All story content: cast, channels, tickets, and message beats. |
 | `game/progress.json` | Your day, XP, reputation, and badges. Written by the app, git-ignored. |
@@ -43,7 +45,7 @@ Say **"hint"** or **"help me"** to your coach if you're stuck.
 | `CHEATSHEET.md` | Your growing git cheat sheet. |
 | `GAME_MASTER.md` | Notes for the coach on how to run each day. |
 
-## Dot's token audit
+## Dotty's token audit
 
 ```bash
 npm run dot     # fails on hex colors, rgb(), p-[13px], bg-[#fff], inline styles
