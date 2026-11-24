@@ -2,11 +2,13 @@ import type { ComponentType } from 'react'
 
 import { Day1Lesson } from './day1/Day1Lesson'
 import { Day2Lesson } from './day2/Day2Lesson'
+import { Day3Lesson } from './day3/Day3Lesson'
 
 /** Register each day's lesson here. */
 const LESSONS: Record<string, ComponentType> = {
   day1: Day1Lesson,
   day2: Day2Lesson,
+  day3: Day3Lesson,
 }
 
 export function LessonView({ lessonId }: { lessonId: string }) {
